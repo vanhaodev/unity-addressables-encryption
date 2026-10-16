@@ -24,7 +24,7 @@ namespace vanhaodev.addressablesencryption.Samples
 		private string _status = "Loading...";
 		private string _music = "";
 #if UNITY_EDITOR
-		private bool _monitor;
+		private StreamReadMonitor _monitor;
 #endif
 
 		private void Awake()
@@ -33,8 +33,7 @@ namespace vanhaodev.addressablesencryption.Samples
 			// Before anything loads: only bundles opened while the monitor listens are observed.
 			if (m_LogStreamReads)
 			{
-				gameObject.AddComponent<StreamReadMonitor>();
-				_monitor = true;
+				_monitor = gameObject.AddComponent<StreamReadMonitor>();
 			}
 #endif
 		}
@@ -67,6 +66,10 @@ namespace vanhaodev.addressablesencryption.Samples
 			Addressables.LoadResourceLocationsAsync(m_MusicAddress, typeof(AudioClip)).Completed += locations =>
 			{
 				var found = locations.Status == AsyncOperationStatus.Succeeded && locations.Result.Count > 0;
+				// The song's bundle file, so the monitor can turn byte positions into time.
+				var bundleFile = found && locations.Result[0].HasDependencies
+					? System.IO.Path.GetFileName(locations.Result[0].Dependencies[0].InternalId)
+					: null;
 				locations.Release();
 				if (!found)
 					return;
@@ -80,6 +83,10 @@ namespace vanhaodev.addressablesencryption.Samples
 						return;
 					}
 
+#if UNITY_EDITOR
+					if (_monitor != null && bundleFile != null)
+						_monitor.SetDuration(bundleFile, handle.Result.length);
+#endif
 					var source = gameObject.AddComponent<AudioSource>();
 					source.clip = handle.Result;
 					source.loop = true;
@@ -93,7 +100,7 @@ namespace vanhaodev.addressablesencryption.Samples
 		{
 			var pictureArea = new Rect(10, 10, Screen.width - 20, Screen.height - 70);
 #if UNITY_EDITOR
-			if (_monitor)
+			if (_monitor != null)
 				pictureArea = StreamReadMonitor.PictureArea;
 #endif
 			if (_texture != null)
