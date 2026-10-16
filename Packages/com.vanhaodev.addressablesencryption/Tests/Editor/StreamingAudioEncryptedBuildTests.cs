@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -15,10 +14,9 @@ using vanhaodev.addressablesencryption.Editor;
 namespace vanhaodev.addressablesencryption.Tests
 {
 	/// <summary>
-	/// A Streaming AudioClip in an encrypted group must fail the build and name the clip; the same clip with
-	/// "Compressed In Memory" builds into an encrypted bundle.
+	/// AudioClips of every load type, Streaming included, build into an encrypted bundle.
 	/// </summary>
-	public class StreamingAudioBuildFailTests
+	public class StreamingAudioEncryptedBuildTests
 	{
 		private const string Root = "Assets/AddressablesEncryptionTestContent";
 		private const string Folder = Root + "/Audio";
@@ -61,25 +59,13 @@ namespace vanhaodev.addressablesencryption.Tests
 			AssetDatabase.SaveAssets();
 		}
 
-		[Test]
-		public void StreamingClip_FailsTheBuild_NamingTheClip()
+		// Streaming clips are read through the decrypting stream while they play (PlayMode test with a real song).
+		[TestCase(AudioClipLoadType.Streaming)]
+		[TestCase(AudioClipLoadType.CompressedInMemory)]
+		[TestCase(AudioClipLoadType.DecompressOnLoad)]
+		public void AnyLoadType_BuildsEncrypted(AudioClipLoadType loadType)
 		{
-			SetLoadType(AudioClipLoadType.Streaming);
-
-			var expected = new Regex("Streaming AudioClips");
-			LogAssert.Expect(LogType.Exception, expected);
-			LogAssert.Expect(LogType.Error, expected);
-			LogAssert.Expect(LogType.Error, new Regex("Addressable content build failure"));
-			AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
-
-			StringAssert.Contains("Streaming AudioClips", result.Error ?? "");
-			StringAssert.Contains(ClipPath, result.Error ?? "");
-		}
-
-		[Test]
-		public void CompressedInMemoryClip_BuildsEncrypted()
-		{
-			SetLoadType(AudioClipLoadType.CompressedInMemory);
+			SetLoadType(loadType);
 
 			AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
 			Assert.IsTrue(string.IsNullOrEmpty(result.Error), "build failed: " + result.Error);

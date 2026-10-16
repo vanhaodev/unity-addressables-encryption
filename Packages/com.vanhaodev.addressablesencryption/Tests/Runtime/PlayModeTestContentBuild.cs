@@ -23,11 +23,13 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 		public const string LocalAddress = "Hanni";
 		public const string RemoteAddress = "TestRemoteTexture";
 		public const string LargeAddress = "TestLargeTexture";
+		public const string MusicAddress = "TestMusic";
 		public const int LargeTextureSize = 2048; // 2048² RGBA32 = 16 MB uncompressed
 		public const string RemoteLoadPath = "http://localhost:" + LocalBundleServer.PortText + "/[BuildTarget]";
 
 		private const string RemoteGroupName = "AE Test Remote";
 		private const string LargeGroupName = "AE Test Large";
+		private const string MusicGroupName = "AE Test Music";
 		private const string ContentFolder = "Assets/AddressablesEncryptionTestContent";
 		private const string SavedLoadPathKey = "AddressablesEncryption.Tests.RemoteLoadPath";
 		private const string SavedPlayModeBuilderKey = "AddressablesEncryption.Tests.PlayModeBuilder";
@@ -51,6 +53,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			Directory.CreateDirectory(ContentFolder);
 			CreateRemoteGroup(settings);
 			CreateLargeGroup(settings);
+			CreateMusicGroup(settings);
 			UsePlayModeExistingBuild(settings);
 			AssetDatabase.SaveAssets();
 
@@ -66,6 +69,8 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 
 			RemoveGroup(settings, RemoteGroupName);
 			RemoveGroup(settings, LargeGroupName);
+			RemoveGroup(settings, MusicGroupName);
+			RestoreMusicImporter();
 
 			var savedLoadPath = SessionState.GetString(SavedLoadPathKey, NotSaved);
 			if (savedLoadPath != NotSaved)

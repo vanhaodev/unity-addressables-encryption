@@ -12,7 +12,7 @@ namespace vanhaodev.addressablesencryption.Editor
 {
 	/// <summary>
 	/// Default packed build + AES encryption of the bundles of groups with an enabled <see cref="EncryptedBundleGroupSchema"/>.<br/>
-	/// Order: validate (key, streaming audio) → assign providers → stock build → encrypt bundle files in place.<br/>
+	/// Order: validate (key, content update) → assign providers → stock build → encrypt bundle files in place.<br/>
 	/// Set as the active player data builder via Tools > Addressables Encryption > Setup.
 	/// </summary>
 	[CreateAssetMenu(fileName = nameof(BuildScriptPackedEncryptedMode) + ".asset", menuName = "Addressables/Content Builders/Encrypted Build Script")]
@@ -42,7 +42,6 @@ namespace vanhaodev.addressablesencryption.Editor
 			if (encryptedGroups.Count > 0)
 			{
 				key = AddressablesEncryptionSettings.ResolveBuildKey();
-				EncryptedBundleBuildValidator.ValidateNoStreamingAudio(settings, encryptedGroups, builderInput.Target);
 			}
 
 			var originalProviders = EncryptedBundleProviderAssigner.Assign(settings, encryptedGroups);

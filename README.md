@@ -57,6 +57,9 @@ encrypting. Game code does not change either way.
 
 Recommended group settings: **LZ4** (or Uncompressed) compression and **Pack Separately** for big assets.
 
+All AudioClip load types work, including **Streaming** (typical for BGM): Unity reads the music through the
+decrypting stream while it plays, so a long song never sits decrypted in memory.
+
 ---
 
 ## Runtime API
@@ -136,8 +139,6 @@ WebGL is supported. Decryption runs inside the stream Unity reads from, so it ne
 
 ## Limitations
 
-- **Streaming AudioClips** (typical for BGM) are not allowed in encrypted groups: the build fails and lists
-  them. Keep them in a plain group, or use Load Type `Compressed In Memory`.
 - **Memory**: a bundle is decrypted 128 KB at a time while Unity reads it. Loading a 16 MB bundle grows the
   managed heap by about 2.4 MB, mostly Addressables' own allocations.
 - **Download size**: `Addressables.GetDownloadSizeAsync` cannot see the encrypted cache. Use

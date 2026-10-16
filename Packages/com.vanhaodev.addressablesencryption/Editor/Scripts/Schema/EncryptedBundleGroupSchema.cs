@@ -16,7 +16,7 @@ namespace vanhaodev.addressablesencryption.Editor
 	{
 		private const string Help =
 			"Bundles of this group are AES-encrypted when built with \"Encrypted Build Script (AssetBundles)\".\n" +
-			"Call AddressablesEncryption.SetKey before loading. Streaming AudioClips are not allowed in this group.\n" +
+			"Call AddressablesEncryption.SetKey before loading.\n" +
 			"Remote bundles are cached (still encrypted) when 'Use Asset Bundle Cache' is on; CRC options are ignored.";
 
 		private static readonly GUIContent HashNamesLabel = new GUIContent("Hash Bundle File Names",
