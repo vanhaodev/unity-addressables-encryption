@@ -190,7 +190,7 @@ await Addressables.ClearDependencyCacheAsync("level2", true).Task;       // plai
 
 ## Sample
 
-One scene, one picture, one group. Turn encryption on or off on the group and rebuild: the game code stays the same.
+One scene, one picture (and an optional song), one group. Turn encryption on or off on the group and rebuild: the game code stays the same.
 
 **1. Import.** `Window > Package Manager > Addressables Encryption > Samples > Demo > Import`. It lands in
 `Assets/Samples/Addressables Encryption/<version>/Demo`.
@@ -202,6 +202,8 @@ One scene, one picture, one group. Turn encryption on or off on the group and re
 
 **3. Group.** Groups window, `Create > Group > Packed Assets`, rename it **Demo**, then Inspector
 **Add Schema > Encryption**. Drag the sample's `Images/hanni_pham.jpg` into it with address **`Hanni`**.
+Optional music: drop any song into the same group with address **`Music`** and set its Load Type to
+**Streaming**. The demo plays it in a loop, streamed straight out of the encrypted bundle.
 
 **4. Build & play.**
 1. Groups window, **Play Mode Script > Use Existing Build**.

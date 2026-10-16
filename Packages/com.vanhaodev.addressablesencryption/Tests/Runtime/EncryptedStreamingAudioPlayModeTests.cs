@@ -9,7 +9,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 {
 	/// <summary>
 	/// A Load Type "Streaming" AudioClip inside an encrypted bundle: with stream decryption Unity reads the audio
-	/// through the decrypting stream while it plays. Uses the Demo sample's song; ignored when it is not imported.
+	/// through the decrypting stream while it plays. Uses the Demo group's "Music" entry; ignored when the project has none.
 	/// </summary>
 	[PrebuildSetup(typeof(PlayModeTestContentBuild))]
 	[PostBuildCleanup(typeof(PlayModeTestContentBuild))]
@@ -26,7 +26,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			var present = locate.Result != null && locate.Result.Count > 0;
 			locate.Release();
 			if (!present)
-				Assert.Ignore("Demo sample song (Music/illit_not_cute_anymore.mp3) is not in the project.");
+				Assert.Ignore("The Demo group has no \"Music\" entry (the song is not shipped with the package).");
 
 			var handle = Addressables.LoadAssetAsync<AudioClip>(PlayModeTestContentBuild.MusicAddress);
 			yield return handle;
