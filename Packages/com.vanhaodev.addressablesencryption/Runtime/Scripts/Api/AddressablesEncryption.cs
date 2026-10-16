@@ -20,8 +20,9 @@ namespace vanhaodev.addressablesencryption
 		private const int KeyIterations = 10000;
 		private const int KeySize = 32;
 
-		// Read from background decrypt threads; swapped as a whole reference, never mutated.
+		// Read from loader threads; swapped as whole references, never mutated.
 		private static volatile AesEncryption _aes;
+		private static volatile byte[] _key;
 
 		/// <summary>True once SetKey was called.</summary>
 		public static bool HasKey => _aes != null;
@@ -38,13 +39,26 @@ namespace vanhaodev.addressablesencryption
 		public static void SetKey(byte[] key)
 		{
 			ValidateRawKey(key);
-			_aes = new AesEncryption((byte[])key.Clone());
+			var copy = (byte[])key.Clone();
+			_key = copy;
+			_aes = new AesEncryption(copy);
 		}
 
 		/// <summary>Forget the key. Encrypted bundles fail to load until SetKey is called again.</summary>
 		public static void ClearKey()
 		{
 			_aes = null;
+			_key = null;
+		}
+
+		/// <summary>A private copy of the current raw key for a decrypting stream (it clears it when disposed).</summary>
+		internal static byte[] CurrentKeyOrThrow(string bundleId)
+		{
+			var key = _key;
+			if (key == null)
+				throw new InvalidOperationException(
+					$"[AddressablesEncryption] No key set while loading encrypted bundle '{bundleId}'. Call AddressablesEncryption.SetKey before loading.");
+			return (byte[])key.Clone();
 		}
 
 		/// <summary>Stretch a secret string into the 256-bit AES key used by <see cref="SetKey(string)"/>.</summary>

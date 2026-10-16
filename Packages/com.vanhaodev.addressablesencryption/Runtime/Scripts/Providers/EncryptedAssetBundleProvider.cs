@@ -10,7 +10,9 @@ namespace vanhaodev.addressablesencryption
 	/// AssetBundle provider for groups encrypted by the encrypted build script.
 	/// Assigned automatically to encrypted groups at build time; do not set it by hand.
 	/// </summary>
-	[Preserve] // created by type name from the catalog, keep it from IL2CPP stripping
+	// Created by type name from the catalog: keep it from IL2CPP stripping and exclude it from renaming obfuscators.
+	[Preserve]
+	[System.Reflection.Obfuscation(Exclude = true, ApplyToMembers = true)]
 	[DisplayName("Encrypted AssetBundle Provider")]
 	public class EncryptedAssetBundleProvider : ResourceProviderBase
 	{

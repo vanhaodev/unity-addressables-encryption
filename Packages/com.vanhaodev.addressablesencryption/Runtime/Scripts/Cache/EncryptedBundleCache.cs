@@ -46,17 +46,29 @@ namespace vanhaodev.addressablesencryption
 			return path != null && File.Exists(path);
 		}
 
-		/// <summary>
-		/// Store encrypted bytes, replacing older versions of the same bundle. Thread-safe enough for concurrent
-		/// stores of the same bundle: each writes its own temp file, the last move wins with identical content.
-		/// </summary>
+		/// <summary>Store encrypted bytes, replacing older versions of the same bundle.</summary>
 		public static void Store(string path, byte[] encryptedBytes)
+		{
+			var temp = GetTempPath(path);
+			File.WriteAllBytes(temp, encryptedBytes);
+			CommitTempFile(temp, path);
+		}
+
+		/// <summary>A new temp file name next to <paramref name="path"/>, for a download that is committed later. Creates the folder.</summary>
+		public static string GetTempPath(string path)
 		{
 			var dir = Path.GetDirectoryName(path);
 			Directory.CreateDirectory(dir);
+			return Path.Combine(dir, Guid.NewGuid().ToString("N") + ".tmp");
+		}
 
-			var temp = Path.Combine(dir, Guid.NewGuid().ToString("N") + ".tmp");
-			File.WriteAllBytes(temp, encryptedBytes);
+		/// <summary>
+		/// Move a fully written temp file onto its final name, replacing older versions of the same bundle.
+		/// Thread-safe enough for concurrent downloads of the same bundle: the last move wins with identical content.
+		/// </summary>
+		public static void CommitTempFile(string temp, string path)
+		{
+			var dir = Path.GetDirectoryName(path);
 			try
 			{
 				if (File.Exists(path))

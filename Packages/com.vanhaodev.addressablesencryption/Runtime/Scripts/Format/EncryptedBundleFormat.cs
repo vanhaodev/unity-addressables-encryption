@@ -14,8 +14,9 @@ namespace vanhaodev.addressablesencryption
 	public static class EncryptedBundleFormat
 	{
 		private static readonly byte[] Magic = { (byte)'A', (byte)'A', (byte)'E', (byte)'N' };
-		private const byte FormatVersion = 1;
-		private const int HeaderSize = 5;
+		internal const byte FormatVersion = 1;
+		/// <summary>Magic (4) + format version (1).</summary>
+		internal const int HeaderSize = 5;
 
 		/// <summary>True if the bytes start with the encrypted bundle header.</summary>
 		public static bool IsEncrypted(byte[] data)
@@ -28,6 +29,32 @@ namespace vanhaodev.addressablesencryption
 					return false;
 			}
 			return true;
+		}
+
+		/// <summary>True if the file starts with the encrypted bundle header. False for missing or short files.</summary>
+		public static bool IsEncryptedFile(string path)
+		{
+			try
+			{
+				using var file = File.OpenRead(path);
+				var header = new byte[HeaderSize];
+				return file.Read(header, 0, HeaderSize) == HeaderSize && IsEncrypted(header);
+			}
+			catch (IOException)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>Throws the same descriptive errors as <see cref="Decrypt"/> for a bad magic or version.</summary>
+		internal static void ValidateHeader(byte[] header, string bundleId)
+		{
+			if (!IsEncrypted(header))
+				throw new InvalidDataException(
+					$"[AddressablesEncryption] Bundle '{bundleId}' is not encrypted or is corrupted (missing header). Rebuild Addressables with the encrypted build script.");
+			if (header[Magic.Length] != FormatVersion)
+				throw new InvalidDataException(
+					$"[AddressablesEncryption] Bundle '{bundleId}' uses unsupported format version {header[Magic.Length]}.");
 		}
 
 		/// <summary>Encrypt a plain bundle file. Returns header + encrypted payload.</summary>
@@ -46,13 +73,10 @@ namespace vanhaodev.addressablesencryption
 		/// <summary>Decrypt an encrypted bundle file. Throws a descriptive exception on any mismatch.</summary>
 		internal static byte[] Decrypt(byte[] fileBytes, AesEncryption aes, string bundleId)
 		{
-			if (!IsEncrypted(fileBytes))
+			if (fileBytes == null || fileBytes.Length < HeaderSize)
 				throw new InvalidDataException(
 					$"[AddressablesEncryption] Bundle '{bundleId}' is not encrypted or is corrupted (missing header). Rebuild Addressables with the encrypted build script.");
-
-			if (fileBytes[Magic.Length] != FormatVersion)
-				throw new InvalidDataException(
-					$"[AddressablesEncryption] Bundle '{bundleId}' uses unsupported format version {fileBytes[Magic.Length]}.");
+			ValidateHeader(fileBytes, bundleId);
 
 			// IV (16) + at least one AES block (16)
 			if (fileBytes.Length < HeaderSize + 32)

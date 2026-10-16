@@ -26,6 +26,10 @@ namespace vanhaodev.addressablesencryption.Editor
 		[Tooltip("Build key. Leave empty and set the " + KeyEnvVar + " environment variable to keep it out of version control.")]
 		[SerializeField] private string m_Key = "";
 
+		/// <summary>Key as typed in the asset (build-time only, read by tests and tooling).</summary>
+		internal string Key => m_Key;
+		internal KeyFormat Format => m_Format;
+
 		/// <summary>Find the settings asset in the project, or null.</summary>
 		public static AddressablesEncryptionSettings Find()
 		{

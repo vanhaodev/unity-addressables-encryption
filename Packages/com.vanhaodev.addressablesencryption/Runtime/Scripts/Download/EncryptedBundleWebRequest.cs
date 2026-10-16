@@ -15,13 +15,15 @@ namespace vanhaodev.addressablesencryption
 	/// - Timeout = seconds WITHOUT progress (same meaning as the stock provider), not total duration<br/>
 	/// - RetryCount, only for errors worth retrying (no retry on 4xx)<br/>
 	/// - ResourceManager certificate handler and WebRequestOverride<br/>
-	/// Calls onDone exactly once with the bytes or an exception.
+	/// Calls onDone exactly once with the bytes (memory mode) or null (file mode, data is at downloadToPath), or an exception.
+	/// In file mode the caller deletes the file after a failure.
 	/// </summary>
 	internal sealed class EncryptedBundleWebRequest : IUpdateReceiver
 	{
 		private const int WaitSleepMs = 1;
 
 		private readonly string _url;
+		private readonly string _downloadToPath;
 		private readonly AssetBundleRequestOptions _options;
 		private readonly ResourceManager _rm;
 		private readonly Action<byte[], Exception> _onDone;
@@ -33,9 +35,11 @@ namespace vanhaodev.addressablesencryption
 		private bool _timedOut;
 		private bool _done;
 
-		public EncryptedBundleWebRequest(string url, AssetBundleRequestOptions options, ResourceManager rm, Action<byte[], Exception> onDone)
+		/// <param name="downloadToPath">Write the response straight to this file (no full copy in memory), or null to keep it in memory.</param>
+		public EncryptedBundleWebRequest(string url, string downloadToPath, AssetBundleRequestOptions options, ResourceManager rm, Action<byte[], Exception> onDone)
 		{
 			_url = url;
+			_downloadToPath = downloadToPath;
 			_options = options;
 			_rm = rm;
 			_onDone = onDone;
@@ -110,6 +114,8 @@ namespace vanhaodev.addressablesencryption
 		private void Send()
 		{
 			var request = UnityWebRequest.Get(_url);
+			if (_downloadToPath != null)
+				request.downloadHandler = new DownloadHandlerFile(_downloadToPath) { removeFileOnAbort = true };
 			if (_options != null && _options.RedirectLimit >= 0 && _options.RedirectLimit < 129)
 				request.redirectLimit = _options.RedirectLimit;
 			if (_rm.CertificateHandlerInstance != null)
@@ -135,7 +141,8 @@ namespace vanhaodev.addressablesencryption
 		{
 			if (request.result == UnityWebRequest.Result.Success)
 			{
-				var bytes = request.downloadHandler.data;
+				var bytes = _downloadToPath == null ? request.downloadHandler.data : null;
+				_finalBytes = (long)request.downloadedBytes;
 				request.Dispose();
 				Finish(bytes, null);
 				return;
@@ -164,7 +171,8 @@ namespace vanhaodev.addressablesencryption
 		private void Finish(byte[] bytes, Exception error)
 		{
 			_done = true;
-			_finalBytes = bytes?.LongLength ?? 0;
+			if (error != null)
+				_finalBytes = 0;
 			_request = null;
 			if (TimeoutSeconds > 0)
 				_rm.RemoveUpdateReciever(this);

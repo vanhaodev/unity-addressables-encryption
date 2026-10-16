@@ -3,6 +3,11 @@
     "rootNamespace": "vanhaodev.addressablesencryption.Tests",
     "references": [
         "com.vanhaodev.addressablesencryption",
+        "com.vanhaodev.addressablesencryption.editor",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Unity.ScriptableBuildPipeline",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
