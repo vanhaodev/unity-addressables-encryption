@@ -116,9 +116,12 @@ namespace vanhaodev.addressablesencryption
 		/// </summary>
 		public static void ClearLegacyNativeCache(string bundleName)
 		{
+#if !UNITY_WEBGL
 			if (string.IsNullOrEmpty(bundleName) || !LegacyCleared.Add(bundleName) || !Caching.ready)
 				return;
 			Caching.ClearAllCachedVersions(bundleName);
+#endif
+			// WebGL has no Caching API: plain bundles were cached by the browser, which encryption cannot reach.
 		}
 
 		private static string ShortHash(string value)

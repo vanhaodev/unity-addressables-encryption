@@ -1,7 +1,7 @@
 ---
 title: "Addressables Encryption v1.2"
 description: "Restructure, stream decryption, content update, catalog encryption, audio test, WebGL, docs"
-status: pending
+status: done
 priority: P1
 effort: 30h
 branch: dev
@@ -20,8 +20,8 @@ Package `Packages/com.vanhaodev.addressablesencryption` 1.1.0 → 1.2.0. On-disk
 | 2 | [Content update builds](phase-02-content-update-builds.md) | 5h | done | 1 |
 | 3 | [Catalog encryption](phase-03-catalog-encryption.md) | 5h | done | 2 |
 | 4 | [Streaming AudioClip build-fail test](phase-04-streaming-audio-build-fail-test.md) | 1.5h | done | 0 (any time) |
-| 5 | [WebGL support](phase-05-webgl-support.md) | 5h | pending | 3 |
-| 6 | [Docs + version 1.2.0](phase-06-docs-and-release.md) | 2h | pending | 0-5 |
+| 5 | [WebGL support](phase-05-webgl-support.md) | 5h | done | 3 |
+| 6 | [Docs + version 1.2.0](phase-06-docs-and-release.md) | 2h | done | 0-5 |
 
 Order: 0 → 1 → 2 → 3 → 5 → 6. Phase 4 can run any time after 0 (it only adds `Tests/Editor/StreamingAudioBuildFailTests.cs`). Numbering: the user's "Phase 6 WebGL, before docs" is Phase 5 here so docs stays last.
 

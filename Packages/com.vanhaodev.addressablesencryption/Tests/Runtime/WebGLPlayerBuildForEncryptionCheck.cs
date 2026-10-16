@@ -54,9 +54,13 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			var savedEncryptCatalog = keySettings.EncryptCatalog;
 			var savedLoadPath = settings.profileSettings.GetValueByName(settings.activeProfileId, AddressableAssetSettings.kRemoteLoadPath) ?? "";
 			var savedCompression = PlayerSettings.WebGL.compressionFormat;
+			var demoSchema = settings.FindGroup("Demo")?.GetSchema<EncryptedBundleGroupSchema>();
+			var savedDemoEncryption = demoSchema != null && demoSchema.IsEnabled;
 			try
 			{
 				keySettings.EncryptCatalog = true;
+				if (demoSchema != null)
+					demoSchema.IsEnabled = true; // the check must load an encrypted local bundle
 				settings.profileSettings.SetValue(settings.activeProfileId, AddressableAssetSettings.kRemoteLoadPath, RemoteLoadPath);
 				Directory.CreateDirectory(Folder);
 				CreateGroups(settings);
@@ -73,7 +77,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 					scenes = new[] { ScenePath },
 					locationPathName = output,
 					target = BuildTarget.WebGL,
-					options = BuildOptions.IncludeTestAssemblies
+					options = BuildOptions.IncludeTestAssemblies | BuildOptions.Development // Development: Debug.Log reaches the browser console
 				});
 				if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
 					throw new InvalidOperationException("WebGL player build: " + report.summary.result);
@@ -84,9 +88,14 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			}
 			finally
 			{
+				// The player build reloads assets: objects fetched before it may be destroyed, so look them up again.
 				PlayerSettings.WebGL.compressionFormat = savedCompression;
+				settings = AddressableAssetSettingsDefaultObject.Settings;
 				settings.profileSettings.SetValue(settings.activeProfileId, AddressableAssetSettings.kRemoteLoadPath, savedLoadPath);
-				keySettings.EncryptCatalog = savedEncryptCatalog;
+				AddressablesEncryptionSettings.Find().EncryptCatalog = savedEncryptCatalog;
+				var demo = settings.FindGroup("Demo")?.GetSchema<EncryptedBundleGroupSchema>();
+				if (demo != null)
+					demo.IsEnabled = savedDemoEncryption;
 				PlayModeTestContentBuild.RemoveGroup(settings, RemoteGroupName);
 				PlayModeTestContentBuild.RemoveGroup(settings, LargeGroupName);
 				AssetDatabase.DeleteAsset(Folder);

@@ -1,8 +1,8 @@
 {
   "name": "com.vanhaodev.addressablesencryption",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "displayName": "Addressables Encryption",
-  "description": "AES-encrypts Addressables AssetBundles per group so asset rippers (AssetRipper, AssetStudio) cannot extract them. Pick which groups to encrypt, set the key at runtime (hardcoded or fetched from a server).",
+  "description": "AES-encrypts Addressables AssetBundles per group (and optionally the catalog) so asset rippers (AssetRipper, AssetStudio) cannot extract them. Bundles are decrypted on the fly while Unity reads them. Works with remote bundles, content updates and WebGL. Set the key at runtime, hardcoded or fetched from a server.",
   "unity": "6000.0",
   "author": {
     "name": "vanhaodev"

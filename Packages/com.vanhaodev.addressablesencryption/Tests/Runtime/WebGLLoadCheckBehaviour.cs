@@ -25,9 +25,10 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 		{
 			AddressablesEncryption.SetKey(PlayModeTestContentBuild.Secret); // before Addressables initializes: the catalog is encrypted
 			var watch = Stopwatch.StartNew();
-			var init = Addressables.InitializeAsync();
+			var init = Addressables.InitializeAsync(false); // keep the handle valid to read its status
 			yield return init;
 			_init = init.Status == AsyncOperationStatus.Succeeded ? $"catalog ok ({watch.ElapsedMilliseconds} ms)" : "init FAILED: " + init.OperationException?.Message;
+			init.Release();
 			Debug.Log("[WebGLCheck] " + _init);
 
 			for (int i = 0; i < _addresses.Length; i++)

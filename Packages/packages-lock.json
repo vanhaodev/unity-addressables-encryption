@@ -326,10 +326,11 @@
       }
     },
     "com.vanhaodev.encryptionmanager": {
-      "version": "file:../../unity-encryption-manager/Exported/com.vanhaodev.encryptionmanager",
+      "version": "https://github.com/vanhaodev/unity-encryption-manager.git?path=Exported/com.vanhaodev.encryptionmanager#1.1.0",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "099071abe8497b6573ca9072e50e141747033989"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
