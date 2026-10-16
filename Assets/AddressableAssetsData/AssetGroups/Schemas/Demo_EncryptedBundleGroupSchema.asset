@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Demo_EncryptedBundleGroupSchema
   m_EditorClassIdentifier: com.vanhaodev.addressablesencryption.editor::vanhaodev.addressablesencryption.Editor.EncryptedBundleGroupSchema
   m_Group: {fileID: 11400000, guid: 56208342a57604e4ca98266670113a1f, type: 2}
-  m_SchemaIsEnabled: 0
+  m_SchemaIsEnabled: 1
   m_HashBundleFileNames: 1
