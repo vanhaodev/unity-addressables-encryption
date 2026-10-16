@@ -1,6 +1,6 @@
 # Unity Addressables Encryption
 
-**v1.2.3** · Unity 6 (6000.0+) · Addressables 4.1.1
+**v1.2.4** · Unity 6 (6000.0+) · Addressables 4.1.1
 
 AES-encrypts Addressables AssetBundles (and optionally the catalog) so asset rippers such as AssetRipper,
 AssetStudio or UABE cannot open them. Bundles are decrypted on the fly while Unity reads them, never written
@@ -19,7 +19,7 @@ Add both packages to `Packages/manifest.json`:
 
 ```json
 "com.vanhaodev.encryptionmanager": "https://github.com/vanhaodev/unity-encryption-manager.git?path=Exported/com.vanhaodev.encryptionmanager#1.1.0",
-"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.3"
+"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.4"
 ```
 
 `com.vanhaodev.encryptionmanager` 1.1.0 or newer is required (it provides the streaming decryptor).
@@ -216,6 +216,8 @@ Optional music: drop any song into the same group with address **`Music`** and s
 - **Bars**, one per bundle, left = start of the file, right = end. **Green** is the decrypted part held in memory
   right now, **red** is what was decrypted earlier and already freed. For a streamed song the green piece stays
   small and slides to the right while red grows behind it: played audio is not kept.
+- Under each bar, **in RAM now**: the stream's two fixed 128 KB buffers (decrypted window + ciphertext) and, for
+  the song, the AudioClip's own memory as measured by Unity, with the total in MB. It stays flat for the whole song.
 - **Timeline**, newest first. A **green** line is a read by Unity (here 32 KB pieces); a **red** line is a 128 KB
   window dropped from memory. The stream decrypts 128 KB at a time, so about four reads are served from one
   window before it is freed. For the song each line also shows the time range (estimated from the byte position).
