@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: unity-addressables-encryption
+  productName: addressables-encryption
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -793,14 +793,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: unity-addressables-encryption
+  metroPackageName: addressables-encryption
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: unity-addressables-encryption
+  metroApplicationDescription: addressables-encryption
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -874,7 +874,7 @@ PlayerSettings:
   cloudProjectId: 9eb22e07-2dfd-40bc-929c-1db1e6e8f7a1
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: unity-addressables-encryption
+  projectName: addressables-encryption
   organizationId: unity_3ed2343646aa4eb7864d
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
