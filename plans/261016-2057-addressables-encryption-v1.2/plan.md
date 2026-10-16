@@ -15,9 +15,9 @@ Package `Packages/com.vanhaodev.addressablesencryption` 1.1.0 → 1.2.0. On-disk
 
 | # | Phase | Effort | Status | Depends |
 |---|-------|--------|--------|---------|
-| 0 | [Restructure + hygiene + test harness](phase-00-restructure-hygiene-and-test-harness.md) | 4h | pending | — |
-| 1 | [Stream decryption](phase-01-stream-decryption.md) | 7h | pending | 0 |
-| 2 | [Content update builds](phase-02-content-update-builds.md) | 5h | pending | 1 |
+| 0 | [Restructure + hygiene + test harness](phase-00-restructure-hygiene-and-test-harness.md) | 4h | done | — |
+| 1 | [Stream decryption](phase-01-stream-decryption.md) | 7h | done | 0 |
+| 2 | [Content update builds](phase-02-content-update-builds.md) | 5h | done | 1 |
 | 3 | [Catalog encryption](phase-03-catalog-encryption.md) | 5h | pending | 2 |
 | 4 | [Streaming AudioClip build-fail test](phase-04-streaming-audio-build-fail-test.md) | 1.5h | pending | 0 (any time) |
 | 5 | [WebGL support](phase-05-webgl-support.md) | 5h | pending | 3 |

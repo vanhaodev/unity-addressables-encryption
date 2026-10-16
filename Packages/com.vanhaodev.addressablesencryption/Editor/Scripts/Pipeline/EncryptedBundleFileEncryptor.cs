@@ -28,10 +28,9 @@ namespace vanhaodev.addressablesencryption.Editor
 				{
 					EditorUtility.DisplayProgressBar("Addressables Encryption", Path.GetFileName(paths[i]), (float)i / paths.Count);
 
-					var bytes = File.ReadAllBytes(paths[i]);
-					if (EncryptedBundleFormat.IsEncrypted(bytes))
+					if (EncryptedBundleFormat.IsEncryptedFile(paths[i]))
 						continue; // reused output of a previous build, already encrypted
-					File.WriteAllBytes(paths[i], EncryptedBundleFormat.Encrypt(bytes, key));
+					File.WriteAllBytes(paths[i], EncryptedBundleFormat.Encrypt(File.ReadAllBytes(paths[i]), key));
 				}
 			}
 			catch
@@ -58,7 +57,7 @@ namespace vanhaodev.addressablesencryption.Editor
 			{
 				try
 				{
-					if (File.Exists(path) && !EncryptedBundleFormat.IsEncrypted(File.ReadAllBytes(path)))
+					if (File.Exists(path) && !EncryptedBundleFormat.IsEncryptedFile(path))
 						File.Delete(path);
 				}
 				catch (System.Exception e)

@@ -4,6 +4,7 @@
     "references": [
         "com.vanhaodev.addressablesencryption",
         "com.vanhaodev.addressablesencryption.editor",
+        "com.vanhaodev.encryptionmanager",
         "Unity.Addressables",
         "Unity.Addressables.Editor",
         "Unity.ResourceManager",

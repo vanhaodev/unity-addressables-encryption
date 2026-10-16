@@ -22,18 +22,24 @@ namespace vanhaodev.addressablesencryption.Editor
 		protected override TResult BuildDataImplementation<TResult>(AddressablesDataBuilderInput builderInput)
 		{
 			var settings = builderInput.AddressableSettings;
+			var contentUpdate = builderInput.PreviousContentState != null;
+
+			// Content update: the group holding the changed assets was created without our schema; give it one
+			// before deciding which groups are encrypted.
+			if (contentUpdate)
+				ContentUpdateEncryptionGuard.InheritEncryptionSchema(settings, builderInput.PreviousContentState);
+
 			var encryptedGroups = new HashSet<AddressableAssetGroup>(settings.groups.Where(EncryptedBundleGroupSchema.IsEncrypted));
 
 			// Exceptions here abort before any bundle is written; BuildData reports them as the build error.
+			// The content update check runs even with no encrypted group left: that is exactly the case where a
+			// previously encrypted bundle would be reverted into a plain catalog.
+			if (contentUpdate)
+				ContentUpdateEncryptionGuard.ValidateNoPlaintextShip(settings, builderInput.PreviousContentState);
+
 			byte[] key = null;
 			if (encryptedGroups.Count > 0)
 			{
-				// Content update moves changed entries of static groups into a new group without the Encryption schema
-				// (shipped as plaintext) and reverts unchanged bundles to the previous provider/file. Not handled yet.
-				if (builderInput.PreviousContentState != null)
-					throw new System.InvalidOperationException(
-						"[AddressablesEncryption] Content update builds are not supported for encrypted groups yet. Make a full build instead.");
-
 				key = AddressablesEncryptionSettings.ResolveBuildKey();
 				EncryptedBundleBuildValidator.ValidateNoStreamingAudio(settings, encryptedGroups, builderInput.Target);
 			}
