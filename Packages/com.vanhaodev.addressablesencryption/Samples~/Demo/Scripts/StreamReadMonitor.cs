@@ -8,7 +8,7 @@ using vanhaodev.addressablesencryption;
 namespace vanhaodev.addressablesencryption.Samples
 {
 	/// <summary>
-	/// Editor only. Two live logs while the demo runs:<br/>
+	/// Editor only. While the demo runs: one memory bar per bundle (see <see cref="StreamMemoryBar"/>) and two live logs:<br/>
 	/// - left: every read Unity makes from an encrypted bundle (what gets decrypted, at which %);<br/>
 	/// - right, in red: every decrypted piece that is dropped from memory (at which %).<br/>
 	/// The decrypting stream keeps one 128 KB window of decrypted data per bundle. When Unity reads outside it, the
@@ -27,10 +27,11 @@ namespace vanhaodev.addressablesencryption.Samples
 		private readonly List<string> _loaded = new List<string>();   // newest first
 		private readonly List<string> _released = new List<string>(); // newest first
 		private readonly Dictionary<string, long> _windowStart = new Dictionary<string, long>();
+		private readonly Dictionary<string, StreamMemoryBar> _bars = new Dictionary<string, StreamMemoryBar>();
 		private int _loadedCount, _releasedCount;
 
 		/// <summary>Area the picture may use, so it does not overlap the two logs.</summary>
-		public static Rect PictureArea => new Rect(10, 10, Screen.width - 20, Screen.height * 0.45f);
+		public static Rect PictureArea => new Rect(10, 10, Screen.width - 20, Screen.height * 0.3f);
 
 		private void Awake() => AddressablesEncryption.BundleStreamRead += OnRead;
 		private void OnDestroy() => AddressablesEncryption.BundleStreamRead -= OnRead;
@@ -55,23 +56,38 @@ namespace vanhaodev.addressablesencryption.Samples
 				{
 					_releasedCount++;
 					var end = System.Math.Min(start + Window, read.Length);
+					Bar(read).Free(start, end);
 					var line = $"{Short(read.Bundle)}  freed {(end - start) / 1024.0,5:F0} KB at {Percent(start, read.Length)} - {Percent(end, read.Length)}";
 					Add(_released, $"<color=#ff5050>{line}</color>");
 					Debug.Log("[Demo stream] " + line);
 				}
-				_windowStart[read.Bundle] = read.Position - read.Position % 16; // windows start on an AES block
+				var newStart = read.Position - read.Position % 16; // windows start on an AES block
+				_windowStart[read.Bundle] = newStart;
+				Bar(read).Hold(newStart, System.Math.Min(newStart + Window, read.Length));
 			}
 		}
 
 		private void OnGUI()
 		{
-			var top = Screen.height * 0.45f + 20;
+			// Middle: one bar per bundle. Bottom: the two logs.
+			var style = new GUIStyle(GUI.skin.label) { richText = true };
+			var y = Screen.height * 0.3f + 20;
+			foreach (var pair in _bars)
+				y += pair.Value.Draw(new Rect(10, y, Screen.width - 20, 60), Short(pair.Key), style);
+
+			var top = y + 10;
 			var height = Screen.height - top - 60;
 			var half = (Screen.width - 30) / 2f;
-			var style = new GUIStyle(GUI.skin.label) { richText = true };
 
 			Draw(new Rect(10, top, half, height), $"Decrypted (read), newest first - {_loadedCount}", _loaded, style);
 			Draw(new Rect(20 + half, top, half, height), $"<color=#ff5050>Freed from memory</color>, newest first - {_releasedCount}", _released, style);
+		}
+
+		private StreamMemoryBar Bar(Read read)
+		{
+			if (!_bars.TryGetValue(read.Bundle, out var bar))
+				_bars[read.Bundle] = bar = new StreamMemoryBar(read.Length);
+			return bar;
 		}
 
 		private static void Draw(Rect area, string title, List<string> lines, GUIStyle style)
