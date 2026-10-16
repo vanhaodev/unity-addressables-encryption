@@ -7,6 +7,7 @@ using UnityEditor.AddressableAssets.Build.DataBuilders;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
+using UnityEngine.Build.Pipeline;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 
@@ -58,6 +59,38 @@ namespace vanhaodev.addressablesencryption.Editor
 				foreach (var pair in originalProviders)
 					pair.Key.AssetBundleProviderType = pair.Value;
 			}
+		}
+
+		/// <summary>
+		/// Encrypted groups with <see cref="EncryptedBundleGroupSchema.HashBundleFileNames"/> get file names without
+		/// group/bundle names: AppendHash → content hash only; NoHash → stable hash of the name (keeps the
+		/// "_hash" suffix the stock pipeline strips later). OnlyHash / FileNameHash are already anonymous.
+		/// </summary>
+		protected override string ConstructAssetBundleName(AddressableAssetGroup assetGroup, BundledAssetGroupSchema schema, BundleDetails info, string assetBundleName)
+		{
+			var name = base.ConstructAssetBundleName(assetGroup, schema, info, assetBundleName);
+			var encryption = assetGroup != null ? assetGroup.GetSchema<EncryptedBundleGroupSchema>() : null;
+			if (encryption == null || !encryption.IsEnabled || !encryption.HashBundleFileNames)
+				return name;
+
+			var hash = info.Hash.ToString();
+			switch (schema.BundleNaming)
+			{
+				case BundledAssetGroupSchema.BundleNamingStyle.AppendHash:
+					return hash + ".bundle";
+				case BundledAssetGroupSchema.BundleNamingStyle.NoHash:
+					var plainName = name.Replace("_" + hash + ".bundle", ".bundle");
+					return NameHash(plainName) + "_" + hash + ".bundle";
+				default:
+					return name;
+			}
+		}
+
+		private static string NameHash(string value)
+		{
+			using var sha = System.Security.Cryptography.SHA256.Create();
+			var bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(value));
+			return System.BitConverter.ToString(bytes, 0, 16).Replace("-", "").ToLowerInvariant();
 		}
 
 		/// <summary>

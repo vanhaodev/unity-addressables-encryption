@@ -12,7 +12,7 @@ namespace vanhaodev.addressablesencryption
 	/// - from a server: fetch the secret, then call SetKey, then load.<br/>
 	/// The key MUST match the build key (Addressables Encryption Settings asset or env var).
 	/// </summary>
-	public static class AddressablesEncryption
+	public static partial class AddressablesEncryption
 	{
 		// Fixed, library-specific salt: the same secret always gives the same key,
 		// but the key differs from any other use of that secret (e.g. save encryption).

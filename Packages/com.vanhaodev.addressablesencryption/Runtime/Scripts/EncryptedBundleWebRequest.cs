@@ -43,6 +43,12 @@ namespace vanhaodev.addressablesencryption
 
 		public float Progress => _done ? 1f : _request?.downloadProgress ?? 0f;
 
+		public bool IsDone => _done;
+
+		private long _finalBytes;
+
+		public long DownloadedBytes => _done ? _finalBytes : (long)(_request?.downloadedBytes ?? 0);
+
 		private int TimeoutSeconds => _options?.Timeout ?? 0;
 
 		public void Start()
@@ -158,6 +164,7 @@ namespace vanhaodev.addressablesencryption
 		private void Finish(byte[] bytes, Exception error)
 		{
 			_done = true;
+			_finalBytes = bytes?.LongLength ?? 0;
 			_request = null;
 			if (TimeoutSeconds > 0)
 				_rm.RemoveUpdateReciever(this);

@@ -19,13 +19,6 @@ namespace vanhaodev.addressablesencryption
 
 		public override void Provide(ProvideHandle providerInterface)
 		{
-			if (providerInterface.Location is { } location && location.GetType().Name == "DownloadOnlyLocation")
-			{
-				// DownloadDependenciesAsync: there is no disk cache for encrypted bundles (v1), so nothing to pre-download.
-				providerInterface.Complete<EncryptedAssetBundleResource>(null, true, null);
-				return;
-			}
-
 			new EncryptedAssetBundleResource().Start(providerInterface);
 		}
 

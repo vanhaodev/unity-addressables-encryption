@@ -5,7 +5,8 @@
         "com.vanhaodev.addressablesencryption",
         "Unity.Addressables",
         "Unity.Addressables.Editor",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "Unity.ScriptableBuildPipeline"
     ],
     "includePlatforms": [
         "Editor"

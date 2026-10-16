@@ -24,6 +24,8 @@ namespace Demo.Editor
 		private const string Root = "Assets/Demo";
 		private const string EncryptedGroupName = "Demo Encrypted";
 		private const string PlainGroupName = "Demo Plain";
+		private const string RemoteGroupName = "Demo Remote Encrypted";
+		private const string RemoteLoadPath = "http://localhost:8765/[BuildTarget]";
 
 		/// <summary>Batchmode entry (-executeMethod Demo.Editor.EncryptedDemoBuildAndVerify.RunBatch): exit code 0 = all checks passed.</summary>
 		public static void RunBatch()
@@ -43,8 +45,11 @@ namespace Demo.Editor
 
 			var encryptedGroup = EnsureGroup(settings, EncryptedGroupName, true);
 			var plainGroup = EnsureGroup(settings, PlainGroupName, false);
+			var remoteGroup = EnsureGroup(settings, RemoteGroupName, true);
+			MakeRemote(settings, remoteGroup);
 			AddEntry(settings, EnsurePrefab("EncryptedCube", PrimitiveType.Cube), encryptedGroup, "EncryptedCube");
 			AddEntry(settings, EnsurePrefab("PlainSphere", PrimitiveType.Sphere), plainGroup, "PlainSphere");
+			AddEntry(settings, EnsurePrefab("RemoteCapsule", PrimitiveType.Capsule), remoteGroup, "RemoteCapsule");
 			EnsureScene();
 			UsePlayModeExistingBuild(settings);
 			AssetDatabase.SaveAssets();
@@ -56,7 +61,19 @@ namespace Demo.Editor
 				return false;
 			}
 
-			return Verify(result, encryptedGroup, plainGroup);
+			return Verify(result, new[] { encryptedGroup, remoteGroup }, plainGroup);
+		}
+
+		/// <summary>
+		/// Remote group served by the PlayMode tests' local HTTP server (http://localhost:8765).
+		/// Changes the active profile's Remote.LoadPath: demo project only.
+		/// </summary>
+		private static void MakeRemote(AddressableAssetSettings settings, AddressableAssetGroup group)
+		{
+			settings.profileSettings.SetValue(settings.activeProfileId, AddressableAssetSettings.kRemoteLoadPath, RemoteLoadPath);
+			var bundled = group.GetSchema<BundledAssetGroupSchema>();
+			bundled.BuildPath.SetVariableByName(settings, AddressableAssetSettings.kRemoteBuildPath);
+			bundled.LoadPath.SetVariableByName(settings, AddressableAssetSettings.kRemoteLoadPath);
 		}
 
 		private static void EnsureDemoKey(AddressablesEncryptionSettings keySettings)
@@ -122,25 +139,28 @@ namespace Demo.Editor
 				settings.ActivePlayModeDataBuilderIndex = index;
 		}
 
-		private static bool Verify(AddressablesPlayerBuildResult result, AddressableAssetGroup encryptedGroup, AddressableAssetGroup plainGroup)
+		private static bool Verify(AddressablesPlayerBuildResult result, AddressableAssetGroup[] encryptedGroups, AddressableAssetGroup plainGroup)
 		{
 			var ok = true;
 			var checkedCount = 0;
 			var report = new StringBuilder("[Demo] Bundle check:\n");
 
-			foreach (var bundle in result.AssetBundleBuildResults.Where(b => b.SourceAssetGroup == encryptedGroup || b.SourceAssetGroup == plainGroup))
+			foreach (var bundle in result.AssetBundleBuildResults.Where(b => encryptedGroups.Contains(b.SourceAssetGroup) || b.SourceAssetGroup == plainGroup))
 			{
 				var bytes = File.ReadAllBytes(bundle.FilePath);
+				var fileName = Path.GetFileName(bundle.FilePath);
 				var hasUnityFs = bytes.Length >= 7 && Encoding.ASCII.GetString(bytes, 0, 7) == "UnityFS";
 				var encrypted = EncryptedBundleFormat.IsEncrypted(bytes);
-				var expectEncrypted = bundle.SourceAssetGroup == encryptedGroup;
-				var pass = expectEncrypted ? encrypted && !hasUnityFs : hasUnityFs && !encrypted;
+				// Encrypted groups hash their file names: no group name on disk or CDN.
+				var nameHidden = !fileName.StartsWith("demo", System.StringComparison.OrdinalIgnoreCase);
+				var expectEncrypted = encryptedGroups.Contains(bundle.SourceAssetGroup);
+				var pass = expectEncrypted ? encrypted && !hasUnityFs && nameHidden : hasUnityFs && !encrypted;
 				ok &= pass;
 				checkedCount++;
-				report.AppendLine($"  {(pass ? "PASS" : "FAIL")} {Path.GetFileName(bundle.FilePath)} (group '{bundle.SourceAssetGroup.Name}', encrypted={encrypted}, UnityFS header={hasUnityFs})");
+				report.AppendLine($"  {(pass ? "PASS" : "FAIL")} {fileName} (group '{bundle.SourceAssetGroup.Name}', encrypted={encrypted}, UnityFS header={hasUnityFs}, name hidden={nameHidden})");
 			}
 
-			ok &= checkedCount >= 2; // at least one bundle per demo group
+			ok &= checkedCount >= 3; // at least one bundle per demo group
 			if (ok)
 				Debug.Log(report + "All good. Open Assets/Demo/Scenes/EncryptedDemo.unity and press Play (Play Mode Script: Use Existing Build).");
 			else
