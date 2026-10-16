@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Samples/Addressables Encryption/1.1.0/Demo/Scenes/EncryptedImageDemo.unity
+    guid: c5044b24956bb674da96f4ec4ce753cb
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: 25548584331a2e449b9f7e49994d5efc, type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: 993222fe90efa444997ab2856182cb3e, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

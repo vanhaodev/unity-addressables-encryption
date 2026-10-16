@@ -94,8 +94,11 @@ Set it up by hand — these are the steps you will do in your own project.
 - `hanni_pham.jpg` → **Demo Encrypted**, address **`HanniEncrypted`**
 - `hanni_pham_plain.jpg` → **Demo Plain**, address **`HanniPlain`**
 
-**5. Scene** — new scene → empty GameObject → **Add Component > Encrypted Image Demo** (defaults match the
-addresses and key above) → save.
+**5. Scene** — open the sample's ready-made `Scenes/EncryptedImageDemo` (its *Encrypted Image Demo* component
+already uses the addresses and key above). `Scenes/EncryptedDemo` + `Prefabs/` do the same with prefabs.
+
+> This repository's own project is already set up (groups, key, builder, scene in Build Profiles): import the
+> sample, pick **Play Mode Script > Use Existing Build** (a per-user setting), then just do steps 6–7.
 
 **6. Build & check**
 1. Groups window → **Play Mode Script > Use Existing Build**.

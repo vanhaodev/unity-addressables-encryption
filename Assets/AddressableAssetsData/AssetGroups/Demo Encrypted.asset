@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Demo Encrypted
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Demo Encrypted
+  m_GUID: da74af348d74fed40b115ec549cd1cbf
+  m_SerializeEntries:
+  - m_GUID: 5b9e27640fcd6c04fbd6ee7eb831632e
+    m_Address: EncryptedCube
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a77c51e22685cd841bd012b7c9877016
+    m_Address: HanniEncrypted
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4649bd014ac231749a6bb001a2f2f5da, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ea491df8da730c446a2fab75ef513992, type: 2}
+    - {fileID: 11400000, guid: 847b4ca22812dc74d8d64bb800a9d0d8, type: 2}
+    - {fileID: 11400000, guid: 80ab15bacee410a428aa433c2a9c2dbb, type: 2}
+    m_SchemaDisplayOrder:
+    - Demo Encrypted_BundledAssetGroupSchema
+    - Demo Encrypted_ContentUpdateGroupSchema
+    - Demo Encrypted_EncryptedBundleGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

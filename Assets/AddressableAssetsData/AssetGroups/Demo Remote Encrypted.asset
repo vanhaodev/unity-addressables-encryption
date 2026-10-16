@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Demo Remote Encrypted
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Demo Remote Encrypted
+  m_GUID: e01fc9a7362247c4a961a265d90877f6
+  m_SerializeEntries:
+  - m_GUID: acd352ca85e8b264f93d9e219508bc25
+    m_Address: RemoteCapsule
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4649bd014ac231749a6bb001a2f2f5da, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 211b6b1c23447e14f976bf293db4eb5b, type: 2}
+    - {fileID: 11400000, guid: 31972661a19d00c45a16c7ca9d6835a2, type: 2}
+    - {fileID: 11400000, guid: e9e16ea38f8ad5844bfc1b8ed1b0c1a1, type: 2}
+    m_SchemaDisplayOrder:
+    - Demo Remote Encrypted_BundledAssetGroupSchema
+    - Demo Remote Encrypted_ContentUpdateGroupSchema
+    - Demo Remote Encrypted_EncryptedBundleGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1
