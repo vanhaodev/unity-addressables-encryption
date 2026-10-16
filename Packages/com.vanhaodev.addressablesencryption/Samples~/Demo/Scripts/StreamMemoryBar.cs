@@ -5,7 +5,7 @@ namespace vanhaodev.addressablesencryption.Samples
 {
 	/// <summary>
 	/// Editor only. One bundle drawn as a bar, left = start of the file, right = end:
-	/// green = decrypted and held in memory now, red = decrypted earlier and freed, light purple = not read yet.
+	/// green = decrypted and held in memory now, red = decrypted earlier and freed (the rest is the empty bar).
 	/// The file is split into 16 KB slots; <see cref="StreamReadMonitor"/> marks them as the stream moves its window.
 	/// </summary>
 	public class StreamMemoryBar
@@ -15,7 +15,7 @@ namespace vanhaodev.addressablesencryption.Samples
 
 		private static readonly Color Green = new Color(0.25f, 0.8f, 0.35f);
 		private static readonly Color Red = new Color(0.9f, 0.25f, 0.25f);
-		private static readonly Color Purple = new Color(0.78f, 0.7f, 0.95f);
+		private static readonly Color Empty = new Color(0.2f, 0.2f, 0.2f);
 
 		private readonly byte[] _slots;
 		private readonly long _length;
@@ -37,7 +37,7 @@ namespace vanhaodev.addressablesencryption.Samples
 				_slots[i] = state;
 		}
 
-		/// <summary>Bar + "held / freed / not read" percentages under it. Returns the height used.</summary>
+		/// <summary>Bar + "held / freed" percentages under it. Returns the height used.</summary>
 		public float Draw(Rect area, string name, GUIStyle style)
 		{
 			int held = 0, freed = 0;
@@ -59,7 +59,7 @@ namespace vanhaodev.addressablesencryption.Samples
 				var j = i + 1;
 				while (j < _slots.Length && _slots[j] == state)
 					j++;
-				GUI.color = state == Held ? Green : state == Freed ? Red : Purple;
+				GUI.color = state == Held ? Green : state == Freed ? Red : Empty;
 				GUI.DrawTexture(new Rect(bar.x + i * slotWidth, bar.y, (j - i) * slotWidth, bar.height), Texture2D.whiteTexture);
 				i = j;
 			}
@@ -67,8 +67,7 @@ namespace vanhaodev.addressablesencryption.Samples
 
 			var total = (float)_slots.Length;
 			GUI.Label(new Rect(area.x, bar.yMax + 2, area.width, 20),
-				$"<color=#40cc5a>held {held * 100 / total:F1}%</color>   <color=#ff5050>freed {freed * 100 / total:F1}%</color>   " +
-				$"<color=#c8b4f2>not read {(total - held - freed) * 100 / total:F1}%</color>", style);
+				$"<color=#40cc5a>held {held * 100 / total:F1}%</color>   <color=#ff5050>freed {freed * 100 / total:F1}%</color>", style);
 			return 60;
 		}
 	}
