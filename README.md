@@ -62,6 +62,15 @@ var handle = Addressables.LoadAssetAsync<GameObject>("Hero");
 - **WebGL** not supported yet (needs threads).
 - **Content update builds** are refused while any group is encrypted — make a full build. Building with any other build script logs an error, because encrypted groups would ship as plaintext.
 - Catalog is not encrypted (asset addresses are visible, asset content is not).
+- Use **LZ4** (or Uncompressed) compression for encrypted groups: LZMA bundles loaded from memory are fully decompressed on load.
+- **VideoClips** in encrypted groups: test on every target platform (video playback from memory-loaded bundles varies).
+
+## Roadmap
+
+- Stream decryption straight from file (peak memory ≈ 1–2× bundle size)
+- Content update builds with encrypted groups
+- Encrypted disk cache for remote bundles (+ `GetDownloadSizeAsync` / `DownloadDependenciesAsync`)
+- WebGL: frame-sliced decryption on the main thread
 - Play Mode `Use Asset Database` skips bundles entirely; test encryption with `Use Existing Build`.
 
 ## How it works

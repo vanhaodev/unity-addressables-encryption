@@ -35,12 +35,12 @@ Deps: `com.unity.addressables` 4.1.1 (latest, Unity 6000.0+), `com.vanhaodev.enc
 - [x] Setup menu `Tools/Addressables Encryption/Setup` — register builder + set active, create settings asset
 
 ### Phase 4 — Demo & verify
-- [ ] `Assets/Demo`: 1 encrypted group + 1 plain group, scene loads both
-- [ ] Verify: bundle bytes unreadable (no `UnityFS` header), loads OK in "Use Existing Build", wrong key → clear error, streaming audio → build fail
-- [ ] Compile check, code review
+- [x] `Assets/Demo`: Build And Verify menu (groups, prefabs, scene, header check) + PlayMode tests (async, sync, reload, wrong key, no key)
+- [x] Verify (batchmode, 2026-10-16): Build And Verify PASS (encrypted bundle: AAEN, no UnityFS; plain: UnityFS); PlayMode 5/5 (async, sync, reload, wrong key, no key). Streaming-audio build fail: not run yet
+- [x] Compile check, code review (EditMode 10/10)
 
 ### Phase 5 — Docs
-- [ ] README (install, SetKey, group toggle, limitations)
+- [x] README (install, SetKey, group toggle, limitations, roadmap)
 
 ## On hold — WebGL (no plan yet, notes only)
 - No threads on WebGL → `Task.Run` decrypt unusable; v1 decrypts on background thread only.
@@ -63,5 +63,5 @@ Deps: `com.unity.addressables` 4.1.1 (latest, Unity 6000.0+), `com.vanhaodev.enc
 - [x] H3: provider assigned only for the build (restored in finally) + error log when built with another builder
 - [x] M3: Timeout = no-progress watchdog (IUpdateReceiver), M4: no retry on 4xx (except 408/429) — `EncryptedBundleWebRequest`
 - [x] Low: continuation exceptions → Fail; play-mode-exit leak; truncated file message; fallback to settings provider
-- [ ] M5 memory (~4x peak): needs decision — stream-decrypt via CryptoStream bypasses EncryptionManager.Decrypt
-- [ ] Content update support for encrypted groups (v1.x)
+- [~] M5 memory (~4x peak): deferred to v1.x (decided 2026-10-16, README Roadmap)
+- [~] Content update support for encrypted groups: deferred to v1.x (decided 2026-10-16)

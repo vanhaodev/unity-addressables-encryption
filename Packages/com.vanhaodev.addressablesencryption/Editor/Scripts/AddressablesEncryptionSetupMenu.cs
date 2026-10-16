@@ -10,10 +10,10 @@ namespace vanhaodev.addressablesencryption.Editor
 	/// One-click setup: create the key settings asset, register the encrypted build script
 	/// and make it the active player builder. Safe to run again.
 	/// </summary>
-	internal static class AddressablesEncryptionSetupMenu
+	public static class AddressablesEncryptionSetupMenu
 	{
 		[MenuItem("Tools/Addressables Encryption/Setup")]
-		private static void Setup()
+		private static void SetupFromMenu()
 		{
 			if (!AddressableAssetSettingsDefaultObject.SettingsExists)
 			{
@@ -22,13 +22,21 @@ namespace vanhaodev.addressablesencryption.Editor
 				return;
 			}
 
-			var settings = AddressableAssetSettingsDefaultObject.Settings;
-			var keySettings = EnsureKeySettings(settings);
-			EnsureActiveBuilder(settings);
-
+			var keySettings = Setup(AddressableAssetSettingsDefaultObject.Settings);
 			Selection.activeObject = keySettings;
 			EditorGUIUtility.PingObject(keySettings);
 			Debug.Log("[AddressablesEncryption] Setup done. Set the build key in the selected asset, then add the 'Encryption' schema to groups to encrypt.");
+		}
+
+		/// <summary>
+		/// Create the key settings asset if missing and make the encrypted build script the active player builder.
+		/// For editor automation / CI. Returns the key settings asset.
+		/// </summary>
+		public static AddressablesEncryptionSettings Setup(AddressableAssetSettings settings)
+		{
+			var keySettings = EnsureKeySettings(settings);
+			EnsureActiveBuilder(settings);
+			return keySettings;
 		}
 
 		private static AddressablesEncryptionSettings EnsureKeySettings(AddressableAssetSettings settings)
