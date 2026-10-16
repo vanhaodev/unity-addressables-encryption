@@ -1,0 +1,18 @@
+{
+    "name": "com.vanhaodev.addressablesencryption",
+    "rootNamespace": "vanhaodev.addressablesencryption",
+    "references": [
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "com.vanhaodev.encryptionmanager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

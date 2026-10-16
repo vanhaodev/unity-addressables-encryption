@@ -1,0 +1,23 @@
+{
+  "name": "com.vanhaodev.addressablesencryption",
+  "version": "1.0.0",
+  "displayName": "Addressables Encryption",
+  "description": "AES-encrypts Addressables AssetBundles per group so asset rippers (AssetRipper, AssetStudio) cannot extract them. Pick which groups to encrypt, set the key at runtime (hardcoded or fetched from a server).",
+  "unity": "6000.0",
+  "author": {
+    "name": "vanhaodev"
+  },
+  "dependencies": {
+    "com.unity.addressables": "4.1.1",
+    "com.vanhaodev.encryptionmanager": "1.0.0"
+  },
+  "documentationUrl": "https://github.com/vanhaodev/unity-addressables-encryption/blob/main/README.md",
+  "keywords": [
+    "vanhaodev",
+    "addressables",
+    "assetbundle",
+    "encryption",
+    "aes",
+    "anti-ripper"
+  ]
+}
