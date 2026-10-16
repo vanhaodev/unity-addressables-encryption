@@ -80,6 +80,7 @@ first Addressables call**, because Addressables loads the catalog while it initi
 | `ClearKey()` / `HasKey` | Forget the key, or check it was set |
 | `GetDownloadSizeAsync(key)` | Bytes still to download, for plain and encrypted bundles. Use it instead of `Addressables.GetDownloadSizeAsync` |
 | `ClearCache()` | Delete cached encrypted bundles. `Addressables.ClearDependencyCacheAsync` only clears plain bundles |
+| `BundleStreamRead` event | **Editor only** debugging: raised on every read Unity makes from an encrypted bundle (bundle, offset, bytes, length). Runs on loader / audio threads |
 
 Errors are explicit: no key, wrong key, bundle not encrypted, truncated file. A wrong key is detected when the
 bundle is opened, before Unity reads any data.

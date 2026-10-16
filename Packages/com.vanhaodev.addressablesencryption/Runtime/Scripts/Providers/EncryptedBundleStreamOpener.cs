@@ -55,7 +55,12 @@ namespace vanhaodev.addressablesencryption
 				EncryptedBundleFormat.ValidateHeader(header, bundleId);
 
 				// The stream keeps its own copy of the key; the AesEncryption wrapper is discarded right away.
-				return new AesEncryption(key).OpenDecryptStream(source, EncryptedBundleFormat.HeaderSize, ownsSource: true);
+				var plain = new AesEncryption(key).OpenDecryptStream(source, EncryptedBundleFormat.HeaderSize, ownsSource: true);
+#if UNITY_EDITOR
+				if (AddressablesEncryption.HasBundleStreamReadListener)
+					return new ObservedReadStream(plain, bundleId);
+#endif
+				return plain;
 			}
 			catch (CryptographicException e)
 			{
