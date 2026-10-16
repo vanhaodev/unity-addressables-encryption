@@ -130,7 +130,7 @@ namespace vanhaodev.addressablesencryption.Samples
 
 		private static string Clock(double seconds) => $"{(int)(seconds / 60)}:{(int)(seconds % 60):00}";
 
-		private static string Short(string bundle) => bundle.Length > 14 ? bundle.Substring(0, 8) + "â¦" + bundle.Substring(bundle.Length - 5) : bundle;
+		private static string Short(string bundle) => bundle.Length > 14 ? bundle.Substring(0, 8) + ".." + bundle.Substring(bundle.Length - 5) : bundle;
 	}
 }
 #endif
