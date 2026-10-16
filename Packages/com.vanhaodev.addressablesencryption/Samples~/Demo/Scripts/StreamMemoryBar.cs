@@ -37,8 +37,8 @@ namespace vanhaodev.addressablesencryption.Samples
 				_slots[i] = state;
 		}
 
-		/// <summary>Bar + "held / freed" percentages under it. Returns the height used.</summary>
-		public float Draw(Rect area, string name, GUIStyle style)
+		/// <summary>Bar, "held / freed" percentages and the given memory line under it. Returns the height used.</summary>
+		public float Draw(Rect area, string name, string memory, GUIStyle style)
 		{
 			int held = 0, freed = 0;
 			foreach (var s in _slots)
@@ -68,7 +68,8 @@ namespace vanhaodev.addressablesencryption.Samples
 			var total = (float)_slots.Length;
 			GUI.Label(new Rect(area.x, bar.yMax + 2, area.width, 20),
 				$"<color=#40cc5a>held {held * 100 / total:F1}%</color>   <color=#ff5050>freed {freed * 100 / total:F1}%</color>", style);
-			return 60;
+			GUI.Label(new Rect(area.x, bar.yMax + 20, area.width, 20), memory, style);
+			return 80;
 		}
 	}
 }

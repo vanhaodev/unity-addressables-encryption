@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Profiling;
 using vanhaodev.addressablesencryption;
 
 namespace vanhaodev.addressablesencryption.Samples
@@ -31,6 +32,7 @@ namespace vanhaodev.addressablesencryption.Samples
 		private readonly Dictionary<string, StreamMemoryBar> _bars = new Dictionary<string, StreamMemoryBar>();
 		private readonly Dictionary<string, float> _durations = new Dictionary<string, float>();
 		private readonly Dictionary<string, long> _lastEnd = new Dictionary<string, long>();
+		private readonly Dictionary<string, long> _lengths = new Dictionary<string, long>();
 		private AudioSource _song;
 		private int _readCount, _freedCount;
 
@@ -92,7 +94,7 @@ namespace vanhaodev.addressablesencryption.Samples
 			// Middle: one bar per bundle.
 			var y = Screen.height * 0.3f + 20;
 			foreach (var pair in _bars)
-				y += pair.Value.Draw(new Rect(10, y, Screen.width - 20, 60), Short(pair.Key), style);
+				y += pair.Value.Draw(new Rect(10, y, Screen.width - 20, 80), Short(pair.Key), MemoryLine(pair.Key), style);
 
 			// Bottom: the timeline.
 			var area = new Rect(10, y + 10, Screen.width - 20, Screen.height - y - 80);
@@ -106,10 +108,32 @@ namespace vanhaodev.addressablesencryption.Samples
 			GUI.Label(new Rect(area.x + 8, area.y + 4, area.width - 16, area.height - 8), title + "\n" + string.Join("\n", _timeline), style);
 		}
 
+		/// <summary>
+		/// What this bundle costs in RAM right now: the stream's two fixed 128 KB buffers (decrypted window and its
+		/// ciphertext), and for the song the AudioClip's own memory as measured by Unity.
+		/// </summary>
+		private string MemoryLine(string bundle)
+		{
+			if (!_windowStart.TryGetValue(bundle, out var start) || !_lengths.TryGetValue(bundle, out var length))
+				return "";
+			// The stream allocates both buffers at full size once, whatever part of them is filled.
+			var filled = System.Math.Min(Window, length - start);
+			var total = Window * 2 + 16; // decrypted buffer + ciphertext buffer (one extra AES block for chaining)
+			var text = $"in RAM now:  decrypted {Window / 1024} KB (filled {filled / 1024.0:F0} KB)  + encrypted buffer {Window / 1024} KB";
+			if (_song != null && _song.clip != null && _durations.ContainsKey(bundle))
+			{
+				var clip = Profiler.GetRuntimeMemorySizeLong(_song.clip);
+				total += clip;
+				text += $"  + Unity audio clip {clip / 1024.0:F0} KB";
+			}
+			return text + $"  =  <b>{total / 1048576.0:F2} MB</b>  (bundle {length / 1048576.0:F2} MB)";
+		}
+
 		private StreamMemoryBar Bar(Read read)
 		{
 			if (!_bars.TryGetValue(read.Bundle, out var bar))
 				_bars[read.Bundle] = bar = new StreamMemoryBar(read.Length);
+			_lengths[read.Bundle] = read.Length;
 			return bar;
 		}
 
