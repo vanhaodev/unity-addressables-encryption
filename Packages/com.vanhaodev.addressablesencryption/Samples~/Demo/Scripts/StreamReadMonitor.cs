@@ -100,6 +100,9 @@ namespace vanhaodev.addressablesencryption.Samples
 			var title = $"Timeline, newest first:  <color={Green}>read {_readCount}</color>   <color={Red}>freed {_freedCount}</color>";
 			if (_song != null && _song.clip != null)
 				title += $"      song playing at {Clock(_song.time)} / {Clock(_song.clip.length)} (reads run ahead of it)";
+			// One-line legend so the panel explains itself.
+			title += "\n<size=11>Unity reads small pieces (green). The stream decrypts 128 KB at a time and keeps only that window: " +
+				"when a read leaves it, the whole window is dropped (red). ↩ = the audio decoder stepped back a little.</size>";
 			GUI.Label(new Rect(area.x + 8, area.y + 4, area.width - 16, area.height - 8), title + "\n" + string.Join("\n", _timeline), style);
 		}
 

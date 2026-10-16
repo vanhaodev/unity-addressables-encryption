@@ -1,6 +1,6 @@
 # Unity Addressables Encryption
 
-**v1.2.2** · Unity 6 (6000.0+) · Addressables 4.1.1
+**v1.2.3** · Unity 6 (6000.0+) · Addressables 4.1.1
 
 AES-encrypts Addressables AssetBundles (and optionally the catalog) so asset rippers such as AssetRipper,
 AssetStudio or UABE cannot open them. Bundles are decrypted on the fly while Unity reads them, never written
@@ -19,7 +19,7 @@ Add both packages to `Packages/manifest.json`:
 
 ```json
 "com.vanhaodev.encryptionmanager": "https://github.com/vanhaodev/unity-encryption-manager.git?path=Exported/com.vanhaodev.encryptionmanager#1.1.0",
-"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.2"
+"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.3"
 ```
 
 `com.vanhaodev.encryptionmanager` 1.1.0 or newer is required (it provides the streaming decryptor).
@@ -210,6 +210,19 @@ Optional music: drop any song into the same group with address **`Music`** and s
 1. Groups window, **Play Mode Script > Use Existing Build**.
 2. **Build > New Build > Encrypted Build Script (AssetBundles)**. The Console shows `Encrypted 1 bundle(s)…`.
 3. Open `Scenes/HanniDemo` and press **Play**. The picture shows with status *Loaded*.
+
+**Stream monitor (Editor only).** While the demo plays, the bottom half shows how encrypted bundles are read:
+
+- **Bars**, one per bundle, left = start of the file, right = end. **Green** is the decrypted part held in memory
+  right now, **red** is what was decrypted earlier and already freed. For a streamed song the green piece stays
+  small and slides to the right while red grows behind it: played audio is not kept.
+- **Timeline**, newest first. A **green** line is a read by Unity (here 32 KB pieces); a **red** line is a 128 KB
+  window dropped from memory. The stream decrypts 128 KB at a time, so about four reads are served from one
+  window before it is freed. For the song each line also shows the time range (estimated from the byte position).
+- The title shows where the song is actually playing. Reads run a little ahead of it, and the audio decoder
+  sometimes steps back a few KB (marked ↩): both are normal.
+
+Untick **Log Stream Reads** on the demo component to hide it. None of this exists in player builds.
 
 **5. Toggle encryption.** Untick the **Encryption** schema on the Demo group and rebuild: the bundle in
 `Library/com.unity.addressables/aa/<platform>/<target>/` becomes a plain `UnityFS` file with its normal name.
