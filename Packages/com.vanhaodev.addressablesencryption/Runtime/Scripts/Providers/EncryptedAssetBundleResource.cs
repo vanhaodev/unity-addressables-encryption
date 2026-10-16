@@ -58,13 +58,11 @@ namespace vanhaodev.addressablesencryption
 				return;
 			}
 
-#if !UNITY_WEBGL
 			if (isRemote)
 			{
 				EncryptedBundleCache.ClearLegacyNativeCache(_options?.BundleName);
 				_cachePath = EncryptedBundleCache.GetPath(_options?.BundleName, _options?.Hash);
 			}
-#endif
 
 			if (_cachePath != null && File.Exists(_cachePath))
 			{

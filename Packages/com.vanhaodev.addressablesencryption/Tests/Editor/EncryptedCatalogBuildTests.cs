@@ -53,7 +53,7 @@ namespace vanhaodev.addressablesencryption.Tests
 			Assert.IsTrue(File.Exists(catalogPath), "catalog.bin exists");
 			Assert.IsTrue(EncryptedBundleFormat.IsEncryptedFile(catalogPath), "catalog.bin starts with AAEN");
 
-			var settingsJson = File.ReadAllText(Path.Combine(Addressables.BuildPath, EncryptedCatalogRuntimeSettings.FileName));
+			var settingsJson = File.ReadAllText(Path.Combine(Addressables.BuildPath, EncryptedCatalogPostProcessor.SettingsFileName));
 			StringAssert.Contains(typeof(EncryptedBinaryCatalogProvider).FullName, settingsJson, "catalog location uses the encrypted provider");
 			StringAssert.Contains(typeof(EncryptedCatalogInitialization).FullName, settingsJson, "initialization object registered");
 

@@ -69,6 +69,7 @@ namespace vanhaodev.addressablesencryption.Tests
 			var expected = new Regex("Streaming AudioClips");
 			LogAssert.Expect(LogType.Exception, expected);
 			LogAssert.Expect(LogType.Error, expected);
+			LogAssert.Expect(LogType.Error, new Regex("Addressable content build failure"));
 			AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
 
 			StringAssert.Contains("Streaming AudioClips", result.Error ?? "");

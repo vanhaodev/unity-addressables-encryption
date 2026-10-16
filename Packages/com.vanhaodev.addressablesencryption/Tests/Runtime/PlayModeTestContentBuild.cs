@@ -93,7 +93,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			AssetDatabase.SaveAssets();
 		}
 
-		private static void RemoveGroup(AddressableAssetSettings settings, string name)
+		internal static void RemoveGroup(AddressableAssetSettings settings, string name)
 		{
 			var group = settings.FindGroup(name);
 			if (group != null)

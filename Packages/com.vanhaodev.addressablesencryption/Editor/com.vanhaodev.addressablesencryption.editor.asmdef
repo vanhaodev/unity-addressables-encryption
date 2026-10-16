@@ -6,8 +6,7 @@
         "Unity.Addressables",
         "Unity.Addressables.Editor",
         "Unity.ResourceManager",
-        "Unity.ScriptableBuildPipeline",
-        "Unity.ScriptableBuildPipeline.Editor"
+        "Unity.ScriptableBuildPipeline"
     ],
     "includePlatforms": [
         "Editor"

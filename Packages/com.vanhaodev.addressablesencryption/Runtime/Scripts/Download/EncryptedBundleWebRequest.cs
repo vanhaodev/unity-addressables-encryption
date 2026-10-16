@@ -65,6 +65,18 @@ namespace vanhaodev.addressablesencryption
 		/// <summary>Block the main thread until the download finished (including retries).</summary>
 		public void WaitForCompletion()
 		{
+#if UNITY_WEBGL && !UNITY_EDITOR
+			// The browser only advances a web request between frames: blocking here would freeze the page forever.
+			// Stock Addressables has the same limit for remote bundles on WebGL.
+			if (!_done)
+			{
+				_request?.Abort();
+				_request = null;
+				Finish(null, new NotSupportedException(
+					$"[AddressablesEncryption] WaitForCompletion cannot wait for a download on WebGL ('{_url}'). Load it asynchronously, or download it first with Addressables.DownloadDependenciesAsync."));
+			}
+			return;
+#else
 			var idle = Stopwatch.StartNew();
 			while (!_done)
 			{
@@ -88,6 +100,7 @@ namespace vanhaodev.addressablesencryption
 				}
 				Thread.Sleep(WaitSleepMs);
 			}
+#endif
 		}
 
 		// No-progress watchdog, ticked by the ResourceManager once per frame.

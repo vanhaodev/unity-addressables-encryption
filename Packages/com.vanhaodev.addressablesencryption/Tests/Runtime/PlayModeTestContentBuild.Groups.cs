@@ -46,7 +46,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			AddEntry(settings, group, LargeTexturePath, LargeAddress);
 		}
 
-		private static AddressableAssetGroup EnsureEncryptedGroup(AddressableAssetSettings settings, string name)
+		internal static AddressableAssetGroup EnsureEncryptedGroup(AddressableAssetSettings settings, string name)
 		{
 			var group = settings.FindGroup(name) ??
 				settings.CreateGroup(name, false, false, true, null, typeof(BundledAssetGroupSchema), typeof(ContentUpdateGroupSchema));
@@ -55,7 +55,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			return group;
 		}
 
-		private static void AddEntry(AddressableAssetSettings settings, AddressableAssetGroup group, string assetPath, string address)
+		internal static void AddEntry(AddressableAssetSettings settings, AddressableAssetGroup group, string assetPath, string address)
 		{
 			var entry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(assetPath), group);
 			entry.address = address;
@@ -70,7 +70,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 		}
 
 		/// <summary>Square noise texture, imported uncompressed without mipmaps: its bundle size is exactly size² × 4 bytes.</summary>
-		private static void WriteTexture(string path, int size, int seed)
+		internal static void WriteTexture(string path, int size, int seed)
 		{
 			var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
 			var pixels = new Color32[size * size];
