@@ -28,7 +28,8 @@ namespace vanhaodev.addressablesencryption.Samples
 
 		// Reads are reported on Unity's loader and audio threads: queue them, show them on the main thread.
 		private readonly ConcurrentQueue<string> _incoming = new ConcurrentQueue<string>();
-		private readonly Queue<string> _logLines = new Queue<string>();
+		private readonly List<string> _logLines = new List<string>(); // newest first
+		private int _readCount;
 		private Texture2D _texture;
 		private string _status = "Loading...";
 		private string _music = "";
@@ -114,15 +115,18 @@ namespace vanhaodev.addressablesencryption.Samples
 		{
 			while (_incoming.TryDequeue(out var line))
 			{
-				_logLines.Enqueue(line);
-				while (_logLines.Count > MaxLogLines)
-					_logLines.Dequeue();
+				_readCount++;
+				_logLines.Insert(0, line); // newest on top, always visible
+				if (_logLines.Count > MaxLogLines)
+					_logLines.RemoveAt(_logLines.Count - 1);
 			}
 		}
 
 		private void OnGUI()
 		{
-			const int logHeight = MaxLogLines * 18 + 10;
+			// Size the log box from the real line height (it changes with DPI and skin), title line included.
+			var lineHeight = Mathf.CeilToInt(GUI.skin.label.lineHeight) + 1;
+			var logHeight = (MaxLogLines + 1) * lineHeight + 12;
 			if (_texture != null)
 				GUI.DrawTexture(new Rect(10, 10, Screen.width - 20, Screen.height - 80 - logHeight), _texture, ScaleMode.ScaleToFit);
 
@@ -131,7 +135,7 @@ namespace vanhaodev.addressablesencryption.Samples
 				var area = new Rect(10, Screen.height - 60 - logHeight, Screen.width - 20, logHeight);
 				GUI.Box(area, GUIContent.none);
 				GUI.Label(new Rect(area.x + 8, area.y + 4, area.width - 16, area.height - 8),
-					"Encrypted stream reads (live)\n" + string.Join("\n", _logLines));
+					$"Encrypted stream reads (live, newest first) - {_readCount} reads\n" + string.Join("\n", _logLines));
 			}
 
 			GUI.Label(new Rect(10, Screen.height - 50, Screen.width, 25), _music);
