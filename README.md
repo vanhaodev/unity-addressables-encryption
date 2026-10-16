@@ -1,6 +1,6 @@
 # Unity Addressables Encryption
 
-**v1.2.1** · Unity 6 (6000.0+) · Addressables 4.1.1
+**v1.2.2** · Unity 6 (6000.0+) · Addressables 4.1.1
 
 AES-encrypts Addressables AssetBundles (and optionally the catalog) so asset rippers such as AssetRipper,
 AssetStudio or UABE cannot open them. Bundles are decrypted on the fly while Unity reads them, never written
@@ -19,7 +19,7 @@ Add both packages to `Packages/manifest.json`:
 
 ```json
 "com.vanhaodev.encryptionmanager": "https://github.com/vanhaodev/unity-encryption-manager.git?path=Exported/com.vanhaodev.encryptionmanager#1.1.0",
-"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.1"
+"com.vanhaodev.addressablesencryption": "https://github.com/vanhaodev/unity-addressables-encryption.git?path=Packages/com.vanhaodev.addressablesencryption#1.2.2"
 ```
 
 `com.vanhaodev.encryptionmanager` 1.1.0 or newer is required (it provides the streaming decryptor).
