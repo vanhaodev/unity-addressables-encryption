@@ -73,15 +73,47 @@ if (size > 0)
 
 ## Sample: Demo
 
-`Window > Package Manager > Addressables Encryption > Samples > Demo > Import`, then
-`Tools > Addressables Encryption > Demo > Build And Verify`. It creates three groups (encrypted, plain, remote
-encrypted), builds them and checks the bundle files. Open `Scenes/EncryptedImageDemo` in the imported sample and
-press Play (Play Mode Script: *Use Existing Build*): the same picture loads from the encrypted and the plain group.
+The same picture loaded from an encrypted group and a plain group, so you can rip the build and compare.
+Set it up by hand — these are the steps you will do in your own project.
 
-- **Rip test**: build a player with
-  `-executeMethod vanhaodev.addressablesencryption.Samples.Editor.EncryptedDemoBuildAndVerify.RunBatchPlayer -buildOutput <exe>`
-  and point AssetRipper / AssetStudio at `<exe>_Data/StreamingAssets/aa` — the plain bundle opens, the encrypted one does not.
-- **PlayMode tests** (Test Runner): local, sync, reload, wrong/missing key, remote cache via a local HTTP server.
+**1. Import** — `Window > Package Manager > Addressables Encryption > Samples > Demo > Import`
+(lands in `Assets/Samples/Addressables Encryption/<version>/Demo`).
+
+**2. Setup the library (once per project)**
+1. `Window > Asset Management > Addressables > Groups` → *Create Addressables Settings* if asked.
+2. `Tools > Addressables Encryption > Setup` → creates `AddressablesEncryptionSettings` and selects the
+   *Encrypted Build Script*.
+3. In `AddressablesEncryptionSettings`: **Format** `Secret`, **Key** `demo-secret`.
+
+**3. Groups**
+1. Groups window → `Create > Group > Packed Assets` → rename **Demo Encrypted** →
+   Inspector **Add Schema > Encryption** (keep *Hash Bundle File Names* on).
+2. Create another group **Demo Plain** — no Encryption schema.
+
+**4. Assets** (from the sample's `Images/` folder)
+- `hanni_pham.jpg` → **Demo Encrypted**, address **`HanniEncrypted`**
+- `hanni_pham_plain.jpg` → **Demo Plain**, address **`HanniPlain`**
+
+**5. Scene** — new scene → empty GameObject → **Add Component > Encrypted Image Demo** (defaults match the
+addresses and key above) → save.
+
+**6. Build & check**
+1. Groups window → **Play Mode Script > Use Existing Build**.
+2. **Build > New Build > Encrypted Build Script (AssetBundles)** → Console: `Encrypted 1 bundle(s)…`.
+3. Look in `Library/com.unity.addressables/aa/<platform>/<target>/`: the encrypted bundle has a hash name and
+   starts with `AAEN` (open it in a hex editor); the plain one starts with `UnityFS`.
+4. **Play** — both halves show the picture, status *Loaded*.
+
+**7. Rip test** — `File > Build Profiles` → add the scene → **Build**. Point AssetRipper / AssetStudio at
+`<exe>_Data/StreamingAssets/aa/`: the plain bundle opens, the encrypted one does not.
+
+**Try breaking it**
+- Wrong key: change *Secret* on the component → left side fails with *wrong key*, right side still loads.
+- Streaming audio: put an AudioClip with Load Type *Streaming* in Demo Encrypted → the build fails and lists it.
+- Remove the Encryption schema and rebuild → the bundle is a plain `UnityFS` file again.
+
+The sample also contains `EncryptedAddressablesDemo` (prefabs), PlayMode tests and an automated
+`Tools > Addressables Encryption > Demo > Build And Verify` menu used for CI — not needed for the steps above.
 
 ## Repository layout
 
