@@ -12,7 +12,7 @@ using UnityEngine;
 using vanhaodev.addressablesencryption;
 using vanhaodev.addressablesencryption.Editor;
 
-namespace Demo.Editor
+namespace vanhaodev.addressablesencryption.Samples.Editor
 {
 	/// <summary>
 	/// One click: create demo prefabs, an encrypted group and a plain group, a demo scene, build with the
@@ -21,13 +21,25 @@ namespace Demo.Editor
 	internal static class EncryptedDemoBuildAndVerify
 	{
 		private const string DemoSecret = "demo-secret";
-		private const string Root = "Assets/Demo";
+		/// <summary>
+		/// The imported sample folder (e.g. Assets/Samples/Addressables Encryption/1.1.0/Demo), found from this
+		/// script's location so the sample works wherever Package Manager imports it.
+		/// </summary>
+		private static string Root
+		{
+			get
+			{
+				var guid = AssetDatabase.FindAssets(nameof(EncryptedDemoBuildAndVerify) + " t:MonoScript").First();
+				var editorDir = Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(guid));
+				return Path.GetDirectoryName(editorDir).Replace('\\', '/');
+			}
+		}
 		private const string EncryptedGroupName = "Demo Encrypted";
 		private const string PlainGroupName = "Demo Plain";
 		private const string RemoteGroupName = "Demo Remote Encrypted";
 		private const string RemoteLoadPath = "http://localhost:8765/[BuildTarget]";
 
-		/// <summary>Batchmode entry (-executeMethod Demo.Editor.EncryptedDemoBuildAndVerify.RunBatch): exit code 0 = all checks passed.</summary>
+		/// <summary>Batchmode entry (-executeMethod vanhaodev.addressablesencryption.Samples.Editor.EncryptedDemoBuildAndVerify.RunBatch): exit code 0 = all checks passed.</summary>
 		public static void RunBatch()
 		{
 			EditorApplication.Exit(BuildAndVerify() ? 0 : 1);
@@ -50,7 +62,11 @@ namespace Demo.Editor
 			AddEntry(settings, EnsurePrefab("EncryptedCube", PrimitiveType.Cube), encryptedGroup, "EncryptedCube");
 			AddEntry(settings, EnsurePrefab("PlainSphere", PrimitiveType.Sphere), plainGroup, "PlainSphere");
 			AddEntry(settings, EnsurePrefab("RemoteCapsule", PrimitiveType.Capsule), remoteGroup, "RemoteCapsule");
+			// Same picture twice: encrypted vs plain, to compare what a ripper gets out of the player build.
+			AddEntry(settings, AssetDatabase.AssetPathToGUID($"{Root}/Images/hanni_pham.jpg"), encryptedGroup, "HanniEncrypted");
+			AddEntry(settings, AssetDatabase.AssetPathToGUID($"{Root}/Images/hanni_pham_plain.jpg"), plainGroup, "HanniPlain");
 			EnsureScene();
+			EnsureImageScene();
 			UsePlayModeExistingBuild(settings);
 			AssetDatabase.SaveAssets();
 
@@ -128,8 +144,48 @@ namespace Demo.Editor
 
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 			var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-			new GameObject("EncryptedAddressablesDemo").AddComponent<Demo.EncryptedAddressablesDemo>();
+			new GameObject("EncryptedAddressablesDemo").AddComponent<EncryptedAddressablesDemo>();
 			EditorSceneManager.SaveScene(scene, path);
+		}
+
+		private static string ImageScenePath => Root + "/Scenes/EncryptedImageDemo.unity";
+
+		private static void EnsureImageScene()
+		{
+			if (File.Exists(ImageScenePath))
+				return;
+
+			Directory.CreateDirectory(Path.GetDirectoryName(ImageScenePath));
+			var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+			new GameObject("EncryptedImageDemo").AddComponent<EncryptedImageDemo>();
+			EditorSceneManager.SaveScene(scene, ImageScenePath);
+		}
+
+		/// <summary>
+		/// Batchmode: Build And Verify, then a Windows player of the image demo.
+		/// -executeMethod vanhaodev.addressablesencryption.Samples.Editor.EncryptedDemoBuildAndVerify.RunBatchPlayer -buildOutput &lt;path to .exe&gt;
+		/// </summary>
+		public static void RunBatchPlayer()
+		{
+			if (!BuildAndVerify())
+			{
+				EditorApplication.Exit(1);
+				return;
+			}
+
+			var args = System.Environment.GetCommandLineArgs();
+			var i = System.Array.IndexOf(args, "-buildOutput");
+			var output = i >= 0 && i + 1 < args.Length ? args[i + 1] : "Builds/Windows/AddressablesEncryptionDemo.exe";
+
+			var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+			{
+				scenes = new[] { ImageScenePath },
+				locationPathName = output,
+				target = BuildTarget.StandaloneWindows64,
+				options = BuildOptions.None
+			});
+			Debug.Log($"[Demo] Player build: {report.summary.result} -> {output}");
+			EditorApplication.Exit(report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded ? 0 : 1);
 		}
 
 		private static void UsePlayModeExistingBuild(AddressableAssetSettings settings)
@@ -162,7 +218,7 @@ namespace Demo.Editor
 
 			ok &= checkedCount >= 3; // at least one bundle per demo group
 			if (ok)
-				Debug.Log(report + "All good. Open Assets/Demo/Scenes/EncryptedDemo.unity and press Play (Play Mode Script: Use Existing Build).");
+				Debug.Log(report + $"All good. Open {Root}/Scenes/EncryptedImageDemo.unity (or EncryptedDemo.unity) and press Play (Play Mode Script: Use Existing Build).");
 			else
 				Debug.LogError(report.ToString());
 			return ok;

@@ -1,6 +1,6 @@
 {
-    "name": "Demo.Tests",
-    "rootNamespace": "Demo.Tests",
+    "name": "vanhaodev.addressablesencryption.samples.demo.tests",
+    "rootNamespace": "vanhaodev.addressablesencryption.Samples.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

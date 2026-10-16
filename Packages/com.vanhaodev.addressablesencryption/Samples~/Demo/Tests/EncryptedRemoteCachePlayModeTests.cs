@@ -8,7 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.TestTools;
 using vanhaodev.addressablesencryption;
 
-namespace Demo.Tests
+namespace vanhaodev.addressablesencryption.Samples.Tests
 {
 	/// <summary>
 	/// Remote encrypted bundle + disk cache, against a local HTTP server.

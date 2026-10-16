@@ -3,7 +3,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using vanhaodev.addressablesencryption;
 
-namespace Demo
+namespace vanhaodev.addressablesencryption.Samples
 {
 	/// <summary>
 	/// Loads one asset from an encrypted group and one from a plain group, then instantiates both.

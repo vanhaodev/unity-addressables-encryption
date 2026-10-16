@@ -71,6 +71,29 @@ if (size > 0)
   copy is removed from the native cache the first time the encrypted version loads.
 - Encrypted groups name bundle files by hash (schema option **Hash Bundle File Names**, on by default).
 
+## Sample: Demo
+
+`Window > Package Manager > Addressables Encryption > Samples > Demo > Import`, then
+`Tools > Addressables Encryption > Demo > Build And Verify`. It creates three groups (encrypted, plain, remote
+encrypted), builds them and checks the bundle files. Open `Scenes/EncryptedImageDemo` in the imported sample and
+press Play (Play Mode Script: *Use Existing Build*): the same picture loads from the encrypted and the plain group.
+
+- **Rip test**: build a player with
+  `-executeMethod vanhaodev.addressablesencryption.Samples.Editor.EncryptedDemoBuildAndVerify.RunBatchPlayer -buildOutput <exe>`
+  and point AssetRipper / AssetStudio at `<exe>_Data/StreamingAssets/aa` — the plain bundle opens, the encrypted one does not.
+- **PlayMode tests** (Test Runner): local, sync, reload, wrong/missing key, remote cache via a local HTTP server.
+
+## Repository layout
+
+```
+Packages/com.vanhaodev.addressablesencryption/   ← the package (single source, installed via ?path=)
+├── Runtime/  Editor/  Tests/Editor/
+└── Samples~/Demo/                               ← hidden from Unity; imported into Assets/Samples (git-ignored)
+```
+
+Developing the sample: import it once, edit it under `Assets/Samples/...`, then copy the changes back to
+`Samples~/Demo` before committing.
+
 ## Limitations (v1)
 
 - **Streaming AudioClips** (typical BGM) are not allowed in encrypted groups — the build fails and lists them.

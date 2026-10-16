@@ -19,5 +19,12 @@
     "encryption",
     "aes",
     "anti-ripper"
+  ],
+  "samples": [
+    {
+      "displayName": "Demo",
+      "description": "Encrypted vs plain groups (prefabs + picture), a remote encrypted group, a one-click Build And Verify menu, a Windows player build for rip tests, and PlayMode tests (local, sync, wrong key, remote cache).",
+      "path": "Samples~/Demo"
+    }
   ]
 }

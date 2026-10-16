@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 using UnityEngine;
 
-namespace Demo.Tests
+namespace vanhaodev.addressablesencryption.Samples.Tests
 {
 	/// <summary>
 	/// Minimal HTTP server for the demo's remote group: serves ServerData/&lt;BuildTarget&gt;/ on

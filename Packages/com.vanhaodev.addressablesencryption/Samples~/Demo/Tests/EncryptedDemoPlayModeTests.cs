@@ -6,7 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.TestTools;
 using vanhaodev.addressablesencryption;
 
-namespace Demo.Tests
+namespace vanhaodev.addressablesencryption.Samples.Tests
 {
 	/// <summary>
 	/// End-to-end load of the demo groups. Requires Tools > Addressables Encryption > Demo > Build And Verify first
