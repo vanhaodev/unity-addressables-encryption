@@ -20,8 +20,18 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 		[UnitySetUp]
 		public IEnumerator SetUp()
 		{
-			AddressablesEncryption.ClearKey();
+			// The catalog is encrypted too, so the key must be there before Addressables initializes.
+			AddressablesEncryption.SetKey(PlayModeTestContentBuild.Secret);
 			yield return Addressables.InitializeAsync();
+			AddressablesEncryption.ClearKey();
+		}
+
+		[Test]
+		public void Catalog_OnDisk_IsEncrypted()
+		{
+			var catalogPath = System.IO.Path.Combine(Addressables.RuntimePath, "catalog.bin");
+			Assert.IsTrue(System.IO.File.Exists(catalogPath), catalogPath);
+			Assert.IsTrue(EncryptedBundleFormat.IsEncryptedFile(catalogPath), "catalog.bin starts with AAEN");
 		}
 
 		[UnityTearDown]

@@ -90,5 +90,16 @@ namespace vanhaodev.addressablesencryption
 
 			return EncryptedBundleFormat.Decrypt(fileBytes, aes, bundleId);
 		}
+
+		/// <summary>Decrypt an encrypted catalog file. The key must be set before Addressables initializes.</summary>
+		internal static byte[] DecryptCatalog(byte[] fileBytes)
+		{
+			var aes = _aes;
+			if (aes == null)
+				throw new InvalidOperationException(
+					"[AddressablesEncryption] No key set while loading the encrypted catalog. Call AddressablesEncryption.SetKey before Addressables initializes (before the first Addressables call).");
+
+			return EncryptedBundleFormat.Decrypt(fileBytes, aes, "catalog");
+		}
 	}
 }

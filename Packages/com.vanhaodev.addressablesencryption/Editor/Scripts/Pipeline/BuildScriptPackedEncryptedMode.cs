@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.AddressableAssets.Build;
+using UnityEditor.AddressableAssets.Build.CatalogBuilders;
 using UnityEditor.AddressableAssets.Build.DataBuilders;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceProviders;
 using UnityEngine.Build.Pipeline;
 
 namespace vanhaodev.addressablesencryption.Editor
@@ -56,12 +59,26 @@ namespace vanhaodev.addressablesencryption.Editor
 				else if (encryptedGroups.Count == 0 && succeeded)
 					Debug.LogWarning("[AddressablesEncryption] Built with the encrypted build script, but no group has the Encryption schema enabled: nothing was encrypted.");
 
+				if (succeeded && AddressablesEncryptionSettings.IsCatalogEncryptionEnabled())
+					EncryptedCatalogRuntimeSettings.AddInitializationObject(Addressables.BuildPath);
+
 				return result;
 			}
 			finally
 			{
 				EncryptedBundleProviderAssigner.Restore(originalProviders);
 			}
+		}
+
+		/// <summary>"Encrypt Catalog" swaps in a builder that encrypts the local catalog file after Addressables wrote it.</summary>
+		protected override ICatalogBuilder CreateCatalogBuilder(AddressableAssetSettings settings)
+		{
+			if (!AddressablesEncryptionSettings.IsCatalogEncryptionEnabled())
+				return base.CreateCatalogBuilder(settings);
+			if (settings.CatalogProviderType != typeof(BinaryCatalogProvider))
+				throw new System.InvalidOperationException(
+					"[AddressablesEncryption] 'Encrypt Catalog' needs the Binary catalog provider: Addressables settings > Catalog Provider, or turn 'Encrypt Catalog' off.");
+			return new EncryptedBinaryCatalogBuilder(AddressablesEncryptionSettings.ResolveBuildKey());
 		}
 
 		protected override string ConstructAssetBundleName(AddressableAssetGroup assetGroup, BundledAssetGroupSchema schema, BundleDetails info, string assetBundleName)

@@ -322,15 +322,14 @@
       "source": "embedded",
       "dependencies": {
         "com.unity.addressables": "4.1.1",
-        "com.vanhaodev.encryptionmanager": "1.0.0"
+        "com.vanhaodev.encryptionmanager": "1.1.0"
       }
     },
     "com.vanhaodev.encryptionmanager": {
-      "version": "https://github.com/vanhaodev/unity-encryption-manager.git?path=Exported/com.vanhaodev.encryptionmanager#1.0.0",
+      "version": "file:../../unity-encryption-manager/Exported/com.vanhaodev.encryptionmanager",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "723eaca860661e541de1f61742f5e4d3527843ef"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

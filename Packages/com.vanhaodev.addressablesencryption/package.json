@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "com.unity.addressables": "4.1.1",
-    "com.vanhaodev.encryptionmanager": "1.0.0"
+    "com.vanhaodev.encryptionmanager": "1.1.0"
   },
   "documentationUrl": "https://github.com/vanhaodev/unity-addressables-encryption/blob/main/README.md",
   "keywords": [

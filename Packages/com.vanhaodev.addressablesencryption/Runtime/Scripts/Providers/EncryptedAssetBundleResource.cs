@@ -27,7 +27,7 @@ namespace vanhaodev.addressablesencryption
 		private bool _cacheRetried;
 
 		private EncryptedBundleWebRequest _download;
-		private AesCbcDecryptingReadStream _stream;
+		private Stream _stream;
 		private AssetBundleCreateRequest _loadRequest;
 		private AssetBundle _bundle;
 		private bool _completed;
@@ -104,7 +104,7 @@ namespace vanhaodev.addressablesencryption
 		private void OpenFileAndLoad(string filePath, bool fromCache)
 		{
 			_loadedFromCache = fromCache;
-			AesCbcDecryptingReadStream stream;
+			Stream stream;
 			try
 			{
 				stream = EncryptedBundleStreamOpener.OpenFile(filePath, _path);
@@ -122,7 +122,7 @@ namespace vanhaodev.addressablesencryption
 		private void OpenMemoryAndLoad(byte[] encryptedBytes)
 		{
 			_loadedFromCache = false;
-			AesCbcDecryptingReadStream stream;
+			Stream stream;
 			try
 			{
 				stream = EncryptedBundleStreamOpener.OpenMemory(encryptedBytes, _path);
@@ -135,7 +135,7 @@ namespace vanhaodev.addressablesencryption
 			StartLoad(stream);
 		}
 
-		private void StartLoad(AesCbcDecryptingReadStream stream)
+		private void StartLoad(Stream stream)
 		{
 #if UNITY_EDITOR
 			// Finished after leaving play mode: loading now would leak a bundle into the next session.

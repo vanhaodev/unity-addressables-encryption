@@ -26,9 +26,32 @@ namespace vanhaodev.addressablesencryption.Editor
 		[Tooltip("Build key. Leave empty and set the " + KeyEnvVar + " environment variable to keep it out of version control.")]
 		[SerializeField] private string m_Key = "";
 
+		[Tooltip("Also encrypt the local catalog (hides asset addresses). The game must then call AddressablesEncryption.SetKey BEFORE Addressables initializes.")]
+		[SerializeField] private bool m_EncryptCatalog;
+
 		/// <summary>Key as typed in the asset (build-time only, read by tests and tooling).</summary>
 		internal string Key => m_Key;
 		internal KeyFormat Format => m_Format;
+
+		/// <summary>Encrypt the local catalog file with the build key (off by default). Settable for tests and tooling.</summary>
+		public bool EncryptCatalog
+		{
+			get => m_EncryptCatalog;
+			set
+			{
+				if (m_EncryptCatalog == value)
+					return;
+				m_EncryptCatalog = value;
+				EditorUtility.SetDirty(this);
+			}
+		}
+
+		/// <summary>True when a settings asset exists and asks for catalog encryption.</summary>
+		public static bool IsCatalogEncryptionEnabled()
+		{
+			var settings = Find();
+			return settings != null && settings.m_EncryptCatalog;
+		}
 
 		/// <summary>Find the settings asset in the project, or null.</summary>
 		public static AddressablesEncryptionSettings Find()

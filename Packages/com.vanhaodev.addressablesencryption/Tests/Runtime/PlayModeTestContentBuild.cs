@@ -32,6 +32,7 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 		private const string SavedLoadPathKey = "AddressablesEncryption.Tests.RemoteLoadPath";
 		private const string SavedPlayModeBuilderKey = "AddressablesEncryption.Tests.PlayModeBuilder";
 		private const string SavedDemoEncryptionKey = "AddressablesEncryption.Tests.DemoEncryption";
+		private const string SavedEncryptCatalogKey = "AddressablesEncryption.Tests.EncryptCatalog";
 		private const string NotSaved = "\0"; // SessionState returns "" for a missing string, so use a sentinel
 
 #if UNITY_EDITOR
@@ -42,6 +43,9 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 
 			var keySettings = AddressablesEncryptionSetupMenu.Setup(settings);
 			Assert.AreEqual(Secret, keySettings.Key, $"AddressablesEncryptionSettings key must be '{Secret}' for the tests.");
+			// The whole PlayMode suite runs against an encrypted catalog (fixtures set the key before initializing).
+			SessionState.SetInt(SavedEncryptCatalogKey, keySettings.EncryptCatalog ? 1 : 0);
+			keySettings.EncryptCatalog = true;
 
 			RequireDemoGroup(settings);
 			Directory.CreateDirectory(ContentFolder);
@@ -76,9 +80,15 @@ namespace vanhaodev.addressablesencryption.Tests.Runtime
 			if (savedDemoEncryption >= 0 && demoSchema != null)
 				demoSchema.IsEnabled = savedDemoEncryption == 1;
 
+			var savedEncryptCatalog = SessionState.GetInt(SavedEncryptCatalogKey, -1);
+			var keySettings = AddressablesEncryptionSettings.Find();
+			if (savedEncryptCatalog >= 0 && keySettings != null)
+				keySettings.EncryptCatalog = savedEncryptCatalog == 1;
+
 			SessionState.EraseString(SavedLoadPathKey);
 			SessionState.EraseInt(SavedPlayModeBuilderKey);
 			SessionState.EraseInt(SavedDemoEncryptionKey);
+			SessionState.EraseInt(SavedEncryptCatalogKey);
 			AssetDatabase.DeleteAsset(ContentFolder);
 			AssetDatabase.SaveAssets();
 		}

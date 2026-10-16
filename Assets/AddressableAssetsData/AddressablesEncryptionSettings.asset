@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: com.vanhaodev.addressablesencryption.editor::vanhaodev.addressablesencryption.Editor.AddressablesEncryptionSettings
   m_Format: 0
   m_Key: demo-secret
+  m_EncryptCatalog: 0
