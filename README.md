@@ -73,8 +73,7 @@ if (size > 0)
 
 ## Sample: Demo
 
-The same picture loaded from an encrypted group and a plain group, so you can rip the build and compare.
-Set it up by hand — these are the steps you will do in your own project.
+One scene, one picture, one group. Turn encryption on or off on the group and rebuild — the game code stays the same.
 
 **1. Import** — `Window > Package Manager > Addressables Encryption > Samples > Demo > Import`
 (lands in `Assets/Samples/Addressables Encryption/<version>/Demo`).
@@ -85,38 +84,24 @@ Set it up by hand — these are the steps you will do in your own project.
    *Encrypted Build Script*.
 3. In `AddressablesEncryptionSettings`: **Format** `Secret`, **Key** `demo-secret`.
 
-**3. Groups**
-1. Groups window → `Create > Group > Packed Assets` → rename **Demo Encrypted** →
-   Inspector **Add Schema > Encryption** (keep *Hash Bundle File Names* on).
-2. Create another group **Demo Plain** — no Encryption schema.
+**3. Group** — Groups window → `Create > Group > Packed Assets` → rename **Demo** →
+Inspector **Add Schema > Encryption**. Drag the sample's `Images/hanni_pham.jpg` into it, address **`Hanni`**.
 
-**4. Assets** (from the sample's `Images/` folder)
-- `hanni_pham.jpg` → **Demo Encrypted**, address **`HanniEncrypted`**
-- `hanni_pham_plain.jpg` → **Demo Plain**, address **`HanniPlain`**
-
-**5. Scene** — open the sample's ready-made `Scenes/EncryptedImageDemo` (its *Encrypted Image Demo* component
-already uses the addresses and key above). `Scenes/EncryptedDemo` + `Prefabs/` do the same with prefabs.
-
-> This repository's own project is already set up (groups, key, builder, scene in Build Profiles): import the
-> sample, pick **Play Mode Script > Use Existing Build** (a per-user setting), then just do steps 6–7.
-
-**6. Build & check**
+**4. Build & play**
 1. Groups window → **Play Mode Script > Use Existing Build**.
 2. **Build > New Build > Encrypted Build Script (AssetBundles)** → Console: `Encrypted 1 bundle(s)…`.
-3. Look in `Library/com.unity.addressables/aa/<platform>/<target>/`: the encrypted bundle has a hash name and
-   starts with `AAEN` (open it in a hex editor); the plain one starts with `UnityFS`.
-4. **Play** — both halves show the picture, status *Loaded*.
+3. Open `Scenes/HanniDemo` and **Play** → the picture shows, status *Loaded*.
 
-**7. Rip test** — `File > Build Profiles` → add the scene → **Build**. Point AssetRipper / AssetStudio at
+**5. Toggle encryption** — on the **Demo** group, untick (or remove) the **Encryption** schema and rebuild:
+the bundle in `Library/com.unity.addressables/aa/<platform>/<target>/` is now a plain `UnityFS` file and gets
+its normal name; tick it again and it is back to an `AAEN` file with a hashed name. Play works either way.
+
+**Rip test** — `File > Build Profiles` → add the scene → **Build**. Point AssetRipper / AssetStudio at
 `<exe>_Data/StreamingAssets/aa/`: the plain bundle opens, the encrypted one does not.
 
-**Try breaking it**
-- Wrong key: change *Secret* on the component → left side fails with *wrong key*, right side still loads.
-- Streaming audio: put an AudioClip with Load Type *Streaming* in Demo Encrypted → the build fails and lists it.
-- Remove the Encryption schema and rebuild → the bundle is a plain `UnityFS` file again.
-
-The sample also contains `EncryptedAddressablesDemo` (prefabs), PlayMode tests and an automated
-`Tools > Addressables Encryption > Demo > Build And Verify` menu used for CI — not needed for the steps above.
+> This repository's own project is already set up (group **Demo**, key, builder, scene in Build Profiles).
+> `Assets/Samples` is git-ignored, so **import the sample first** — without it the group's entry points at a
+> missing asset and the build logs `Encrypted 0 bundle(s)`. Then pick *Use Existing Build* and do step 4.
 
 ## Repository layout
 

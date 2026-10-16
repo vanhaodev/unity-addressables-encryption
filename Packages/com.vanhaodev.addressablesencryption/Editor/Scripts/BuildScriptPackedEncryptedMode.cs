@@ -158,6 +158,11 @@ namespace vanhaodev.addressablesencryption.Editor
 				EditorUtility.ClearProgressBar();
 			}
 
+			if (paths.Count == 0)
+				Debug.LogWarning("[AddressablesEncryption] No bundle was built for the encrypted group(s) "
+					+ string.Join(", ", encryptedGroups.Select(g => g.Name))
+					+ ". Their entries probably point at assets that are missing from the project (e.g. a sample that is not imported).");
+
 			Debug.Log($"[AddressablesEncryption] Encrypted {paths.Count} bundle(s) from {encryptedGroups.Count} group(s).");
 		}
 

@@ -1,8 +1,6 @@
 ﻿<Solution>
-  <Project Path="vanhaodev.addressablesencryption.samples.demo.tests.csproj" />
   <Project Path="com.vanhaodev.addressablesencryption.tests.editor.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="com.vanhaodev.addressablesencryption.csproj" />
   <Project Path="com.vanhaodev.addressablesencryption.editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
 </Solution>

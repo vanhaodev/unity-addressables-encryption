@@ -23,7 +23,7 @@
   "samples": [
     {
       "displayName": "Demo",
-      "description": "Encrypted vs plain groups (prefabs + picture), a remote encrypted group, a one-click Build And Verify menu, a Windows player build for rip tests, and PlayMode tests (local, sync, wrong key, remote cache).",
+      "description": "One scene that loads a picture from an Addressables group. Add or remove the Encryption schema on the group to see the bundle encrypted or plain.",
       "path": "Samples~/Demo"
     }
   ]

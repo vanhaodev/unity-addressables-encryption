@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 1854990947}
   - component: {fileID: 1854990946}
   m_Layer: 0
-  m_Name: EncryptedImageDemo
+  m_Name: HanniDemo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -239,10 +239,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c99a32ec5f5646418848c57f453a8ed, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::vanhaodev.addressablesencryption.Samples.EncryptedImageDemo
+  m_EditorClassIdentifier: Assembly-CSharp::vanhaodev.addressablesencryption.Samples.HanniDemo
   m_Secret: demo-secret
-  m_EncryptedAddress: HanniEncrypted
-  m_PlainAddress: HanniPlain
+  m_Address: Hanni
 --- !u!4 &1854990947
 Transform:
   m_ObjectHideFlags: 0
