@@ -51,6 +51,8 @@ namespace vanhaodev.addressablesencryption.Editor
 
 				if (key != null && result is AddressablesPlayerBuildResult playerResult && string.IsNullOrEmpty(playerResult.Error))
 					EncryptBundles(playerResult, encryptedGroups, key);
+				else if (encryptedGroups.Count == 0 && result is AddressablesPlayerBuildResult && string.IsNullOrEmpty(result.Error))
+					Debug.LogWarning("[AddressablesEncryption] Built with the encrypted build script, but no group has the Encryption schema enabled: nothing was encrypted.");
 
 				return result;
 			}
