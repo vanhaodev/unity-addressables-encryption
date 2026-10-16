@@ -30,13 +30,22 @@ namespace vanhaodev.addressablesencryption.Samples
 		private readonly Dictionary<string, long> _windowStart = new Dictionary<string, long>();
 		private readonly Dictionary<string, StreamMemoryBar> _bars = new Dictionary<string, StreamMemoryBar>();
 		private readonly Dictionary<string, float> _durations = new Dictionary<string, float>();
+		private readonly Dictionary<string, long> _lastEnd = new Dictionary<string, long>();
+		private AudioSource _song;
 		private int _readCount, _freedCount;
 
 		/// <summary>Area the picture may use, so it does not overlap the bars and the timeline.</summary>
 		public static Rect PictureArea => new Rect(10, 10, Screen.width - 20, Screen.height * 0.3f);
 
-		/// <summary>Audio length of the clip stored in that bundle file: lines then show time ranges too.</summary>
-		public void SetDuration(string bundleFileName, float seconds) => _durations[bundleFileName] = seconds;
+		/// <summary>
+		/// The song stored in that bundle file: its lines then show time ranges too, and the title shows where the
+		/// song is actually playing (Unity reads ahead of it).
+		/// </summary>
+		public void SetSong(string bundleFileName, AudioSource source)
+		{
+			_durations[bundleFileName] = source.clip.length;
+			_song = source;
+		}
 
 		private void Awake() => AddressablesEncryption.BundleStreamRead += OnRead;
 		private void OnDestroy() => AddressablesEncryption.BundleStreamRead -= OnRead;
@@ -68,7 +77,11 @@ namespace vanhaodev.addressablesencryption.Samples
 				}
 
 				_readCount++;
-				Add(Green, $"{Short(read.Bundle)}  read  {read.Bytes / 1024.0,5:F1} KB  {Range(read.Bundle, read.Position, read.Position + read.Bytes, read.Length)}");
+				// The audio decoder sometimes steps back a little (frame resync, overlapping reads): mark it.
+				var back = _lastEnd.TryGetValue(read.Bundle, out var lastEnd) && read.Position < lastEnd && lastEnd - read.Position < Window
+					? $"   ↩ back {(lastEnd - read.Position) / 1024.0:F1} KB" : "";
+				_lastEnd[read.Bundle] = read.Position + read.Bytes;
+				Add(Green, $"{Short(read.Bundle)}  read  {read.Bytes / 1024.0,5:F1} KB  {Range(read.Bundle, read.Position, read.Position + read.Bytes, read.Length)}{back}");
 			}
 		}
 
@@ -85,6 +98,8 @@ namespace vanhaodev.addressablesencryption.Samples
 			var area = new Rect(10, y + 10, Screen.width - 20, Screen.height - y - 80);
 			GUI.Box(area, GUIContent.none);
 			var title = $"Timeline, newest first:  <color={Green}>read {_readCount}</color>   <color={Red}>freed {_freedCount}</color>";
+			if (_song != null && _song.clip != null)
+				title += $"      song playing at {Clock(_song.time)} / {Clock(_song.clip.length)} (reads run ahead of it)";
 			GUI.Label(new Rect(area.x + 8, area.y + 4, area.width - 16, area.height - 8), title + "\n" + string.Join("\n", _timeline), style);
 		}
 
@@ -115,7 +130,7 @@ namespace vanhaodev.addressablesencryption.Samples
 
 		private static string Clock(double seconds) => $"{(int)(seconds / 60)}:{(int)(seconds % 60):00}";
 
-		private static string Short(string bundle) => bundle.Length > 14 ? bundle.Substring(0, 8) + "…" + bundle.Substring(bundle.Length - 5) : bundle;
+		private static string Short(string bundle) => bundle.Length > 14 ? bundle.Substring(0, 8) + "â¦" + bundle.Substring(bundle.Length - 5) : bundle;
 	}
 }
 #endif

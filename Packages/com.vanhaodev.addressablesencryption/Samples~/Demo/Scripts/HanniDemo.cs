@@ -83,12 +83,12 @@ namespace vanhaodev.addressablesencryption.Samples
 						return;
 					}
 
-#if UNITY_EDITOR
-					if (_monitor != null && bundleFile != null)
-						_monitor.SetDuration(bundleFile, handle.Result.length);
-#endif
 					var source = gameObject.AddComponent<AudioSource>();
 					source.clip = handle.Result;
+#if UNITY_EDITOR
+					if (_monitor != null && bundleFile != null)
+						_monitor.SetSong(bundleFile, source);
+#endif
 					source.loop = true;
 					source.Play();
 					_music = $"Playing '{handle.Result.name}' ({handle.Result.loadType})";
